@@ -1,4 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button';
@@ -32,7 +31,7 @@ const BSLogin = (props) => {
             }).then((res) => {
                 return res.json();
             }).then(async (data) => {
-                await fetch('/api/login', {
+                await fetch('https://prevexam.dece.nycu.edu.tw/api/login', {
                     method: "POST",
                     credentials: 'include',
                     headers: {

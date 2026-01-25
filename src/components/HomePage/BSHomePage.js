@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import Card from 'react-bootstrap/Card'
 import Image from 'react-bootstrap/Image'
-import 'bootstrap/dist/css/bootstrap.min.css'
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -40,6 +39,7 @@ const BSHomePage = () => {
                                 1. 考古資源是學長姐慢慢累積出來的，請不要惡意使用。<br />
                                 2. 右上方支援搜尋功能，搜尋到的文字會被 Highlight。<br />
                                 3. 如果要用 Filter，請先選科目再選其他。
+                                4. 上傳考古題前請確認老師意願，若有侵權問題，請自行負責。
                             </Card.Text>
                         </Card>
                     </Col>

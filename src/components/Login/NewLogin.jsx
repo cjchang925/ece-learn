@@ -24,7 +24,7 @@ const NewLogin = (props) => {
             }).then((res) => {
                 return res.json();
             }).then(async (data) => {
-                await fetch('/api/login', {
+                await fetch('https://prevexam.dece.nycu.edu.tw/api/login', {
                     method: "POST",
                     credentials: 'include',
                     headers: {
