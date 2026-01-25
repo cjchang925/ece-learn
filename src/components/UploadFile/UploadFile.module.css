@@ -1,0 +1,240 @@
+/* Container */
+.container {
+    min-height: calc(100vh - 60px);
+    background-color: #f5f5f5;
+    padding: 24px;
+}
+
+/* Header */
+.header {
+    max-width: 800px;
+    margin: 0 auto 32px;
+    text-align: center;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 12px;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Form Card */
+.formCard {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 32px;
+}
+
+/* Success Message */
+.successMessage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+
+/* Form Grid */
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+/* Form Group */
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup.fullWidth {
+    grid-column: 1 / -1;
+}
+
+.label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.required {
+    color: #f5576c;
+    margin-left: 4px;
+}
+
+.input,
+.select {
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #333;
+    background: white;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus,
+.select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.input::placeholder {
+    color: #aaa;
+}
+
+/* File Upload Area */
+.fileUploadArea {
+    grid-column: 1 / -1;
+    border: 2px dashed #d0d0d0;
+    border-radius: 12px;
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.fileUploadArea:hover {
+    border-color: #667eea;
+    background-color: rgba(102, 126, 234, 0.03);
+}
+
+.fileUploadArea.hasFile {
+    border-color: #4caf50;
+    background-color: rgba(76, 175, 80, 0.05);
+}
+
+.uploadIcon {
+    font-size: 2.5rem;
+    color: #667eea;
+    margin-bottom: 12px;
+}
+
+.uploadIcon.hasFile {
+    color: #4caf50;
+}
+
+.uploadText {
+    font-size: 1rem;
+    color: #666;
+    margin: 0 0 8px;
+}
+
+.uploadHint {
+    font-size: 0.85rem;
+    color: #999;
+    margin: 0;
+}
+
+.fileName {
+    font-size: 0.95rem;
+    color: #333;
+    font-weight: 500;
+    margin: 8px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.fileIcon {
+    color: #667eea;
+}
+
+.hiddenInput {
+    display: none;
+}
+
+/* Submit Button */
+.submitSection {
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+.submitButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.submitButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Info Box */
+.infoBox {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.infoIcon {
+    color: #667eea;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.infoText {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .formCard {
+        padding: 24px 20px;
+    }
+
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .fileUploadArea {
+        padding: 30px 16px;
+    }
+}

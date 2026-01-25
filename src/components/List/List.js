@@ -1,192 +1,152 @@
-import React, { useState } from 'react';
-import classes from "./List.module.css"
-import ListElement from "./ListElement";
+import React, { useState, useEffect } from 'react';
+import styles from "./List.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faDownload, faFolderOpen } from "@fortawesome/free-solid-svg-icons";
 
-const table_head = ["科目", "教師", "年份", "類別"];
-const tab_size = [25, 15, 15, 15];
-
-function getUnique(items) {
+function getUniqueValues(items) {
     return [
         [...new Set(items.map(arr => arr[0]).sort())],
         [...new Set(items.map(arr => arr[1]).sort())],
-        [...new Set(items.map(arr => arr[2]).sort((x, y) => {
-            const num_x = Number(x.replace(/[^\d.]/g, ''));
-            const num_y = Number(y.replace(/[^\d.]/g, ''));
-
-            if (num_x < num_y) {
-                return -1
-            } else if (num_x > num_y) {
-                return 1;
-            } else {
-                return 0;
-            }
+        [...new Set(items.map(arr => arr[2]).sort((a, b) => {
+            const numA = Number(a.replace(/[^\d.]/g, ''));
+            const numB = Number(b.replace(/[^\d.]/g, ''));
+            return numA - numB;
         }))],
         [...new Set(items.map(arr => arr[3]).sort())],
-    ]
+    ];
 }
 
-const List = (props) => {
-    const [items, setItems] = useState(props.items);
-    // Option will be: (subject, teacher, year, type)
-    const [option, setOption] = useState(getUnique(props.items))
-    const [userState, setUserState] = useState({
-        "科目": "", "教師": "", "年份": "", "類別": ""
-    })
+function getTypeBadgeClass(type) {
+    const t = String(type).toLowerCase();
+    if (t.includes('期中')) return styles.typeMidterm;
+    if (t.includes('期末')) return styles.typeFinal;
+    if (t.includes('小考') || t.includes('quiz')) return styles.typeQuiz;
+    if (t.includes('作業') || t.includes('hw')) return styles.typeHomework;
+    return styles.typeOther;
+}
 
-    React.useEffect(() => {
-        setItems(props.items);
-        setOption(getUnique(props.items));
-        setUserState({
-            "科目": "", "教師": "", "年份": "", "類別": ""
-        })
-    }, [props.items])
+const List = ({ items: propItems, stickyTop }) => {
+    const [items, setItems] = useState(propItems);
+    const [options, setOptions] = useState(getUniqueValues(propItems));
+    const [filters, setFilters] = useState({ subject: '', teacher: '', year: '', type: '' });
 
-    function clickItem(e) {
-        const text = e.target.innerText;
-        const category = e.target.parentNode.id;
+    useEffect(() => {
+        setItems(propItems);
+        setOptions(getUniqueValues(propItems));
+        setFilters({ subject: '', teacher: '', year: '', type: '' });
+    }, [propItems]);
 
-        let filter_list;
-        if (category === "年份") {
-            filter_list = props.items.filter((item) => {
-                let index = 0;
-                let checkState = { ...userState };
-                for (const [key, value] of Object.entries(userState)) {
-                    if ((index === 2) && (item[index] !== text)) {
-                        return false;
-                    } else if (index === 2) {
-                        continue;
-                    }
+    const handleFilter = (category, value) => {
+        let filtered;
 
-                    if (value.length === 0) {
-                        checkState[key] = item[index]
-                    }
-
-                    if (item[index] !== checkState[key]) {
-                        return false;
-                    }
-
-                    index += 1;
-                }
-                return true
+        if (category === 'subject') {
+            filtered = propItems.filter(item => item[0] === value);
+            const newOptions = getUniqueValues(filtered);
+            newOptions[0] = [...new Set(propItems.map(arr => arr[0]).sort())];
+            setOptions(newOptions);
+            setFilters({ subject: value, teacher: '', year: '', type: '' });
+        } else if (category === 'teacher') {
+            filtered = propItems.filter(item => {
+                if (filters.subject && item[0] !== filters.subject) return false;
+                return item[1] === value;
             });
-        } else if (category === "科目") {
-            filter_list = props.items.filter((item) => {
-                return item[0] === text
+            setFilters(prev => ({ ...prev, teacher: value }));
+        } else if (category === 'year') {
+            filtered = propItems.filter(item => {
+                if (filters.subject && item[0] !== filters.subject) return false;
+                if (filters.teacher && item[1] !== filters.teacher) return false;
+                return item[2] === value;
             });
-            // Maintain the subject
-            const new_option = getUnique(filter_list);
-            new_option[0] = [...new Set(props.items.map(arr => arr[0]).sort())]
-            setOption(new_option);
-
-            setUserState(
-                { "科目": text, "教師": "", "年份": "", "類別": "" }
-            )
-        } else if (category === "教師") {
-            filter_list = props.items.filter((item) => {
-                let index = 0;
-                let checkState = { ...userState };
-                for (const [key, value] of Object.entries(userState)) {
-                    if (index === 1 && item[index] !== text) {
-                        return false;
-                    } else if (index === 1) {
-                        return true;
-                    }
-
-                    if (value.length === 0) {
-                        checkState[key] = item[index]
-                    }
-
-                    if (item[index] !== checkState[key]) {
-                        return false;
-                    }
-
-                    index += 1;
-                }
-                return true
+            setFilters(prev => ({ ...prev, year: value }));
+        } else if (category === 'type') {
+            filtered = propItems.filter(item => {
+                if (filters.subject && item[0] !== filters.subject) return false;
+                if (filters.teacher && item[1] !== filters.teacher) return false;
+                if (filters.year && item[2] !== filters.year) return false;
+                return item[3] === value;
             });
-
-            setOption((oldOption) => {
-                oldOption[2] = [...new Set(filter_list.map(arr => arr[2]).sort((x, y) => {
-                    const num_x = Number(x.replace(/[^\d.]/g, ''));
-                    const num_y = Number(y.replace(/[^\d.]/g, ''));
-
-                    if (num_x < num_y) {
-                        return -1
-                    } else if (num_x > num_y) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }))]
-                oldOption[3] = [...new Set(filter_list.map(arr => arr[3]).sort())]
-                return oldOption
-            })
-
-            setUserState((oldState) => (
-                { ...oldState, [category]: text }
-            ))
-        } else {
-            filter_list = props.items.filter((item) => {
-                let index = 0;
-                let checkState = { ...userState };
-                for (const [key, value] of Object.entries(userState)) {
-                    if (index === 3 && item[index] !== text) {
-                        return false;
-                    } else if (index === 3) {
-                        continue;
-                    }
-
-                    if (value.length === 0) {
-                        checkState[key] = item[index]
-                    }
-
-                    if (item[index] !== checkState[key]) {
-                        return false;
-                    }
-
-                    index += 1;
-                }
-                return true
-            });
+            setFilters(prev => ({ ...prev, type: value }));
         }
 
-        setItems(filter_list);
-    }
+        setItems(filtered);
+    };
+
+    const columns = [
+        { key: 'subject', label: '科目', className: styles.colSubject },
+        { key: 'teacher', label: '教師', className: styles.colTeacher },
+        { key: 'year', label: '年份', className: styles.colYear },
+        { key: 'type', label: '類別', className: styles.colType },
+    ];
+
+    const getFileExtension = (filename) => {
+        if (!filename) return '下載';
+        const ext = filename.split('.').pop();
+        return ext || '下載';
+    };
 
     return (
-        <div className={classes["list_div"]}>
-            <table>
-                <thead style={{ top: `${props.stickyTop}px`, textAlign: 'center' }}>
-                    <tr>
-                        {
-                            table_head.map((item, id) => (
-                                <th key={`${id + 2}`} style={{ width: `${tab_size[id]}%` }} className={classes["decorate"]}>
-                                    <div className={classes["dropdown"]}>
-                                        {item}
-                                        <button className={classes["icon"]}><FontAwesomeIcon icon={faFilter} /></button>
-                                        <div style={{ width: `${tab_size[id]}%` }} className={classes["dropdown-content"]} id={item}>
-                                            {option[id].map((item, id) => (
-                                                <button key={id} onClick={clickItem}>{item}</button>
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <h1 className={styles.title}>考古題列表</h1>
+                <span className={styles.count}>{items.length} 筆資料</span>
+            </div>
+
+            <div className={styles.tableContainer}>
+                {items.length > 0 ? (
+                    <table className={styles.table}>
+                        <thead>
+                            <tr>
+                                {columns.map((col, idx) => (
+                                    <th key={col.key} className={`${styles.filterCell} ${col.className}`}>
+                                        <span className={styles.filterLabel}>
+                                            {col.label}
+                                            <FontAwesomeIcon icon={faChevronDown} className={styles.filterIcon} />
+                                        </span>
+                                        <div className={styles.dropdown}>
+                                            {options[idx].map((opt, i) => (
+                                                <button key={i} onClick={() => handleFilter(col.key, opt)}>
+                                                    {opt}
+                                                </button>
                                             ))}
                                         </div>
-                                    </div>
-                                </th>
-                            ))
-                        }
-                        <th style={{ width: "10%" }} key="6">類型</th>
-                        <th style={{ width: "20%" }} key="7">檔案</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {items.map((item, index) => (
-                        <ListElement key={index} item={item} index={index} />
-                    ))}
-                </tbody>
-            </table>
+                                    </th>
+                                ))}
+                                <th className={styles.colNote}>備註</th>
+                                <th className={styles.colFile}>檔案</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {items.map((item, idx) => (
+                                <tr key={idx}>
+                                    <td className={`${styles.colSubject} ${styles.subjectCell}`}>{item[0]}</td>
+                                    <td className={`${styles.colTeacher} ${styles.teacherCell}`}>{item[1]}</td>
+                                    <td className={`${styles.colYear} ${styles.yearCell}`}>
+                                        <span className={styles.yearBadge}>{item[2]}</span>
+                                    </td>
+                                    <td className={`${styles.colType} ${styles.typeCell}`}>
+                                        <span className={`${styles.typeBadge} ${getTypeBadgeClass(item[3])}`}>
+                                            {item[3]}
+                                        </span>
+                                    </td>
+                                    <td className={`${styles.colNote} ${styles.noteCell}`}>{item[4] || '-'}</td>
+                                    <td className={`${styles.colFile} ${styles.fileCell}`}>
+                                        <a href={item[6]} target="_blank" rel="noreferrer" className={styles.fileLink}>
+                                            <FontAwesomeIcon icon={faDownload} />
+                                            {getFileExtension(item[5])}
+                                        </a>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <div className={styles.empty}>
+                        <FontAwesomeIcon icon={faFolderOpen} className={styles.emptyIcon} />
+                        <p>沒有找到符合條件的考古題</p>
+                    </div>
+                )}
+            </div>
         </div>
-
     );
 };
 

@@ -1,18 +1,23 @@
-import classes from "./card.module.css"
-import image from "./user.png"
+import styles from "./card.module.css";
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 
-const Card = (props) => {
+const Card = ({ text, status }) => {
     return (
-        <div className={classes["card"]}>
-            <div className={classes["card_img"]}>
-                <img style={{"opacity": 0.3}} alt="head" src={image}/>
+        <div className={styles.card}>
+            <div className={styles.cardIcon}>
+                <FontAwesomeIcon icon={faLightbulb} />
             </div>
-            <div className={classes["card_info"]}>
-                <h3>{props.text}</h3>
+            <p className={styles.cardText}>{text}</p>
+            <div className={styles.cardMeta}>
+                <span className={styles.cardStatus}>
+                    <span className={`${styles.statusDot} ${status === 'completed' ? styles.completed : ''}`}></span>
+                    {status === 'completed' ? '已完成' : '處理中'}
+                </span>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Card;

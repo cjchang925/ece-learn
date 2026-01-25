@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button';
 import { useGoogleLogin } from '@react-oauth/google';
@@ -10,7 +10,7 @@ LoadingOverlay.propTypes = undefined
 
 const BSLogin = (props) => {
     const [user, setUser] = useState()
-    const { height, width } = useWindowDimensions();
+    const { width } = useWindowDimensions();
     const [loading, setLoading] = useState(() => {
         return width > 900 ? true : false;
     });

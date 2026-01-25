@@ -1,104 +1,254 @@
-table {
-    margin: auto;
-    width: 70%;
-    position: relative;
+/* Container */
+.container {
+    min-height: calc(100vh - 60px);
+    background-color: #f5f5f5;
+    padding: 24px;
+}
+
+/* Header */
+.header {
+    max-width: 1200px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.count {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* Table Container */
+.tableContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* Table */
+.table {
+    width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
 }
 
-table th {
-    background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 6px -1px, rgba(0, 0, 0, 0.06) 0 2px 4px -1px;
+/* Column Widths */
+.colSubject { width: 22%; text-align: left; }
+.colTeacher { width: 14%; text-align: left; }
+.colYear { width: 10%; text-align: center; }
+.colType { width: 12%; text-align: center; }
+.colNote { width: 22%; text-align: left; }
+.colFile { width: 20%; text-align: center; }
+
+/* Header Row */
+.table thead {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
-table thead {
+.table thead th {
+    color: white;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 16px;
     position: sticky;
+    top: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    z-index: 10;
 }
 
-table .center-col {
-    text-align: center;
-}
-
-.decorate {
-    text-decoration: underline;
+/* Filter Dropdown */
+.filterCell {
+    position: relative;
     cursor: pointer;
-    transition: all .1s ease-in-out;
 }
 
-tr:hover {
-    background-color: rgba(239, 239, 239, 0.7);
+.filterCell:hover .dropdown {
+    display: block;
 }
 
-td, th {
-    border-top: 1px solid #dddddd;
-    padding: 8px 0;
+.filterLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
-td {
-    padding-top: 20px;
-    padding-bottom: 20px;
-    overflow: hidden;
-    word-wrap: break-word;
-}
-
-.icon {
-    background-color: inherit;
-    border: none;
-    margin-left: 5px;
+.filterIcon {
+    font-size: 0.7rem;
+    opacity: 0.7;
 }
 
 .dropdown {
-    width: 100%;
-}
-
-.dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-    z-index: 1;
+    top: 100%;
+    left: 0;
+    min-width: 180px;
+    max-height: 250px;
     overflow-y: auto;
-    max-height: 30vh;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    margin-top: 4px;
 }
 
-
-.dropdown-content button {
-    color: black;
-    padding: 12px 16px;
+.dropdown button {
     display: block;
     width: 100%;
-    font-size: 15px;
-    text-align: center;
-    background-color: inherit;
-    border: None;
+    padding: 10px 16px;
+    text-align: left;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 0.9rem;
     cursor: pointer;
 }
 
-.dropdown-content button:hover {
-    background-color: #f1f1f1
+.dropdown button:hover {
+    background: #f0f0f0;
 }
 
-.dropdown:hover .dropdown-content {
-    display: block;
+/* Body Rows */
+.table tbody tr {
+    background: white;
+    border-bottom: 1px solid #eee;
 }
 
-@media (max-width: 768px) {
-    table {
-        width: 100%;
-        table-layout: fixed;
+.table tbody tr:hover {
+    background: #fafafa;
+}
+
+.table tbody td {
+    padding: 16px;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+/* Cell Styles */
+.subjectCell {
+    font-weight: 500;
+    color: #1a1a2e;
+}
+
+.teacherCell {
+    color: #555;
+}
+
+.yearCell {
+    text-align: center !important;
+}
+
+.yearBadge {
+    display: inline-block;
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+.typeCell {
+    text-align: center !important;
+}
+
+.typeBadge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.typeMidterm {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.typeFinal {
+    background: #fce4ec;
+    color: #c2185b;
+}
+
+.typeQuiz {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.typeHomework {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.typeOther {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.noteCell {
+    color: #666;
+}
+
+.fileCell {
+    text-align: center;
+}
+
+.fileLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.fileLink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+/* Empty State */
+.empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.emptyIcon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    color: #ddd;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .tableContainer {
+        overflow-x: auto;
     }
 
-    table thead {
-        top: 240px;
+    .table {
+        min-width: 800px;
     }
-}
 
-.list_div {
-    min-height: calc(100vh - 250px);
-}
-
-@media screen and (max-width: 700px) {
-    .list_div {
-        min-height: calc(100vh - 100px);
+    .table thead th {
+        position: static;
     }
 }

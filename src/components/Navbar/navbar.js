@@ -1,39 +1,23 @@
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faBars} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBars, faSearch } from '@fortawesome/free-solid-svg-icons'
 import classes from "./navbar.module.css"
-import {useState} from "react";
+import { useState } from "react";
 import React from "react";
 
 const NavbarCustom = (props) => {
     const [inputText, setInputText] = useState("");
-
-    const greeting = 'Hi, ' + props.userName
+    const [isOpen, setIsOpen] = useState(false);
+    const [activeButton, setActiveButton] = useState("readme");
 
     const ToggleHandler = () => {
-        const nav = document.getElementById("myTopNav")
-
-        if (nav.className === classes["top-nav"]) {
-            nav.className += ` ${classes["responsive"]}`;
-        } else {
-            nav.className = classes["top-nav"];
-        }
-
-        props.stickHandler(nav.offsetHeight)
+        setIsOpen(!isOpen);
     }
 
     const gradeClickHandler = (e) => {
-        ToggleHandler();
-        const buttons = document.querySelectorAll("#myTopNav > button");
-        buttons.forEach((button, id) => {
-            if (id !== 0 && id !== 9) {
-                if (button.value.toString() === e.target.value.toString()) {
-                    button.className = classes["select"];
-                } else {
-                    button.className = "";
-                }
-            }
-        })
-        props.gradeClick(e.target.value);
+        const value = e.target.value;
+        setActiveButton(value);
+        setIsOpen(false);
+        props.gradeClick(value);
     }
 
     const inputTextChangeHandler = (e) => {
@@ -45,22 +29,98 @@ const NavbarCustom = (props) => {
         props.logoutHandler()
     }
 
+    const getButtonClass = (value) => {
+        let className = classes.navButton;
+        if (activeButton === value) {
+            className += ` ${classes.active}`;
+        }
+        return className;
+    }
+
     return (
-        <div className={classes["top-nav"]} id="myTopNav">
-            <button className={classes.active} style={{ cursor: 'auto' }}>{greeting}</button>
-            <button value="readme" onClick={gradeClickHandler}>首頁</button>
-            <button value="first" onClick={gradeClickHandler}>大一</button>
-            <button value="second" onClick={gradeClickHandler}>大二</button>
-            <button value="advance" onClick={gradeClickHandler}>大三以上</button>
-            <button value="other" onClick={gradeClickHandler}>通識與其他</button>
-            <button value="hope" onClick={gradeClickHandler}>願望清單</button>
-            <button value="uploadfile" onClick={gradeClickHandler}>上傳考古</button>
-            <button value="logout" onClick={logoutHandler}>登出</button>
-            <input type="text" placeholder="Search" value={inputText} onChange={inputTextChangeHandler}/>
-            <button className={classes.icon} onClick={ToggleHandler}>
-                <FontAwesomeIcon icon={faBars}/>
+        <nav className={`${classes.topNav} ${isOpen ? classes.responsive : ''}`} id="myTopNav">
+            {/* Brand */}
+            <div className={classes.brand}>
+                <div className={classes.brandIcon}>EE</div>
+                <span className={classes.brandText}>Hi, {props.userName}</span>
+            </div>
+
+            {/* Navigation Links */}
+            <div className={classes.navLinks}>
+                <button
+                    value="readme"
+                    onClick={gradeClickHandler}
+                    className={getButtonClass("readme")}
+                >
+                    首頁
+                </button>
+                <button
+                    value="first"
+                    onClick={gradeClickHandler}
+                    className={getButtonClass("first")}
+                >
+                    大一
+                </button>
+                <button
+                    value="second"
+                    onClick={gradeClickHandler}
+                    className={getButtonClass("second")}
+                >
+                    大二
+                </button>
+                <button
+                    value="advance"
+                    onClick={gradeClickHandler}
+                    className={getButtonClass("advance")}
+                >
+                    大三以上
+                </button>
+                <button
+                    value="other"
+                    onClick={gradeClickHandler}
+                    className={getButtonClass("other")}
+                >
+                    通識與其他
+                </button>
+                <button
+                    value="hope"
+                    onClick={gradeClickHandler}
+                    className={getButtonClass("hope")}
+                >
+                    願望清單
+                </button>
+                <button
+                    value="uploadfile"
+                    onClick={gradeClickHandler}
+                    className={getButtonClass("uploadfile")}
+                >
+                    上傳考古
+                </button>
+                <button
+                    onClick={logoutHandler}
+                    className={`${classes.navButton} ${classes.logout}`}
+                >
+                    登出
+                </button>
+            </div>
+
+            {/* Search */}
+            <div className={classes.searchContainer}>
+                <FontAwesomeIcon icon={faSearch} className={classes.searchIcon} />
+                <input
+                    type="text"
+                    placeholder="搜尋課程或老師..."
+                    value={inputText}
+                    onChange={inputTextChangeHandler}
+                    className={classes.searchInput}
+                />
+            </div>
+
+            {/* Mobile Menu Toggle */}
+            <button className={classes.menuToggle} onClick={ToggleHandler}>
+                <FontAwesomeIcon icon={faBars} />
             </button>
-        </div>
+        </nav>
     )
 };
 

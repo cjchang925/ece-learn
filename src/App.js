@@ -7,7 +7,7 @@ import CardList from "./components/card/card_list";
 import { Helmet } from "react-helmet";
 import UploadFile from "./components/UploadFile/UploadFile";
 import BSHomePage from "./components/HomePage/BSHomePage";
-import BSLogin from "./components/Login/BSLogin";
+import Login from "./components/Login/Login";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -180,7 +180,7 @@ function App() {
         />
         {
           (() => {
-            if (showList === "readme") return <BSHomePage />
+            if (showList === "readme") return <BSHomePage onNavigate={setGradeClick} />
             else if (showList === "hope") return <CardList />
             else if (showList === "uploadfile") return <UploadFile />
             else return <List stickyTop={height} items={displayData} />
@@ -191,7 +191,12 @@ function App() {
   } else {
     return (
       <div>
-        <BSLogin handleLoginState={setLoginState} handleUser={setUser} />
+        <Helmet>
+          <title>Login - 交大電機考古網站</title>
+          <meta name="description"
+            content="交大電機專用考古網站，您考前的好幫手" />
+        </Helmet>
+        <Login handleLoginState={setLoginState} handleUser={setUser} />
       </div>
     )
   }
