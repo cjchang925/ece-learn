@@ -6,6 +6,10 @@
     font-family: 'Noto Sans TC', sans-serif;
 }
 
-.hl {
+.app {
+    min-height: 100vh;
+}
+
+.highlight {
     background-color: #FFEF78;
 }

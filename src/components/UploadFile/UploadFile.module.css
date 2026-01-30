@@ -75,7 +75,7 @@
 }
 
 .required {
-    color: #f5576c;
+    color: #f97316;
     margin-left: 4px;
 }
 
@@ -93,8 +93,8 @@
 .input:focus,
 .select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .input::placeholder {
@@ -113,8 +113,8 @@
 }
 
 .fileUploadArea:hover {
-    border-color: #667eea;
-    background-color: rgba(102, 126, 234, 0.03);
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.03);
 }
 
 .fileUploadArea.hasFile {
@@ -124,7 +124,7 @@
 
 .uploadIcon {
     font-size: 2.5rem;
-    color: #667eea;
+    color: #3b82f6;
     margin-bottom: 12px;
 }
 
@@ -156,7 +156,7 @@
 }
 
 .fileIcon {
-    color: #667eea;
+    color: #3b82f6;
 }
 
 .hiddenInput {
@@ -174,7 +174,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #3b82f6;
     color: white;
     padding: 14px 32px;
     border: none;
@@ -187,7 +187,7 @@
 
 .submitButton:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
 .submitButton:disabled {
@@ -198,7 +198,7 @@
 /* Info Box */
 .infoBox {
     grid-column: 1 / -1;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+    background: rgba(59, 130, 246, 0.08);
     border-radius: 8px;
     padding: 16px;
     display: flex;
@@ -207,7 +207,7 @@
 }
 
 .infoIcon {
-    color: #667eea;
+    color: #3b82f6;
     font-size: 1.25rem;
     flex-shrink: 0;
     margin-top: 2px;

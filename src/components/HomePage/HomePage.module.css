@@ -1,6 +1,6 @@
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: #1e3a5f;
     padding: 80px 20px;
     text-align: center;
     color: white;
@@ -56,7 +56,7 @@
 .statNumber {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #4fc3f7;
+    color: #38bdf8;
 }
 
 .statLabel {
@@ -106,12 +106,12 @@
 }
 
 .cardIconInfo {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #3b82f6;
     color: white;
 }
 
 .cardIconWish {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: #f97316;
     color: white;
 }
 
@@ -145,7 +145,7 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #3b82f6;
     color: white;
     display: flex;
     align-items: center;
@@ -156,7 +156,7 @@
 }
 
 .listNumberWish {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: #f97316;
 }
 
 .listText {
@@ -165,7 +165,7 @@
 
 /* Form Button */
 .formButton {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: #f97316;
     border: none;
     padding: 8px 20px;
     border-radius: 20px;
@@ -175,8 +175,8 @@
 
 .formButton:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+    background: #ea580c;
 }
 
 /* Quick Actions */
@@ -194,7 +194,7 @@
 }
 
 .actionCard {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #3b82f6;
     border-radius: 16px;
     padding: 32px;
     text-align: center;
@@ -206,23 +206,23 @@
 
 .actionCard:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
 }
 
 .actionCard.secondary {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    background: #14b8a6;
 }
 
 .actionCard.secondary:hover {
-    box-shadow: 0 12px 30px rgba(17, 153, 142, 0.4);
+    box-shadow: 0 12px 30px rgba(20, 184, 166, 0.4);
 }
 
 .actionCard.tertiary {
-    background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+    background: #8b5cf6;
 }
 
 .actionCard.tertiary:hover {
-    box-shadow: 0 12px 30px rgba(252, 74, 26, 0.4);
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
 }
 
 .actionIcon {
