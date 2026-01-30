@@ -43,6 +43,7 @@ function App() {
   const [userName, setUserName] = useState(
     window.localStorage.getItem(STORAGE_KEYS.USER_NAME) || "Test User",
   );
+  const [isCheckingAuth, setIsCheckingAuth] = useState(!UI_TEST_MODE);
 
   useEffect(() => {
     const fetchAllExamData = async () => {
@@ -70,6 +71,8 @@ function App() {
 
   useEffect(() => {
     const checkLoginStatus = async () => {
+      if (UI_TEST_MODE) return;
+
       try {
         const response = await fetch(API_ENDPOINTS.LOGIN_STATUS_CHECK, {
           method: "GET",
@@ -88,6 +91,8 @@ function App() {
         }
       } catch (error) {
         console.error("Failed to check login status:", error);
+      } finally {
+        setIsCheckingAuth(false);
       }
     };
 
@@ -204,6 +209,18 @@ function App() {
     window.localStorage.removeItem(STORAGE_KEYS.LOGIN_STATE);
     setIsLoggedIn(false);
   };
+
+  // Loading screen while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div>
+          <p className="text-white text-lg">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   const renderCurrentView = () => {
     switch (currentView) {
