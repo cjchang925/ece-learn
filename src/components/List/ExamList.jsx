@@ -136,10 +136,10 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   };
 
   const columns = [
-    { key: "subject", label: "科目", width: "w-[22%]" },
-    { key: "teacher", label: "教師", width: "w-[14%]" },
-    { key: "year", label: "年份", width: "w-[10%]" },
-    { key: "type", label: "類別", width: "w-[12%]" },
+    { key: "subject", label: "科目", width: "w-[22%]", align: "text-left" },
+    { key: "teacher", label: "教師", width: "w-[14%]", align: "text-left" },
+    { key: "year", label: "年份", width: "w-[10%]", align: "text-center" },
+    { key: "type", label: "類別", width: "w-[12%]", align: "text-center" },
   ];
 
   const getDownloadButtonLabel = (filename) => {
@@ -168,9 +168,9 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                   {columns.map((column, columnIndex) => (
                     <th
                       key={column.key}
-                      className={`${column.width} px-4 py-4 text-left text-white text-sm font-medium relative group`}
+                      className={`${column.width} px-4 py-4 ${column.align} text-white text-sm font-medium relative group`}
                     >
-                      <div className="flex items-center gap-2 cursor-pointer">
+                      <div className={`flex items-center gap-2 cursor-pointer ${column.align === 'text-center' ? 'justify-center' : ''}`}>
                         {column.label}
                         <FontAwesomeIcon
                           icon={faChevronDown}
