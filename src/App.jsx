@@ -18,7 +18,7 @@ import {
 } from "./constants";
 
 // Set to true to bypass login for UI testing (remember to set back to false!)
-const UI_TEST_MODE = true;
+const UI_TEST_MODE = false;
 
 function App() {
   const [examDataByCategory, setExamDataByCategory] = useState({
