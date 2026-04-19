@@ -34,6 +34,9 @@ function getAvailableFilterOptions(examRecords) {
   ];
 }
 
+/** Pixels to shift the filter menu left so list text lines up with the header label text. */
+const FILTER_MENU_NUDGE_LEFT_PX = 16;
+
 function getExamTypeBadgeClass(examType) {
   const type = String(examType).toLowerCase();
   if (type.includes("期中")) return "bg-amber-100 text-amber-700";
@@ -58,12 +61,10 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   });
   /** 0–3 = filter column index; fixed-position menu escapes overflow clipping */
   const [openFilterColumn, setOpenFilterColumn] = useState(null);
-  const [filterMenuStyle, setFilterMenuStyle] = useState({
-    top: 0,
-    left: 0,
-    minWidth: 180,
-  });
+  const [filterMenuStyle, setFilterMenuStyle] = useState({ top: 0, left: 0 });
   const filterTriggerRefs = useRef([]);
+  /** Narrow label+icon row — used for dropdown horizontal alignment (th is full width; centered columns need this). */
+  const filterLabelRefs = useRef([]);
   const tableScrollRef = useRef(null);
   const filterLeaveTimerRef = useRef(null);
 
@@ -74,17 +75,25 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
     }
   };
 
+  const getFilterMenuGeometry = (columnIndex) => {
+    const th = filterTriggerRefs.current[columnIndex];
+    const labelEl = filterLabelRefs.current[columnIndex];
+    if (!th) return null;
+    const thRect = th.getBoundingClientRect();
+    const labelRect = labelEl?.getBoundingClientRect();
+    const anchorLeft = labelRect?.left ?? thRect.left;
+    const left = Math.max(8, anchorLeft - FILTER_MENU_NUDGE_LEFT_PX);
+    return {
+      top: thRect.bottom,
+      left,
+    };
+  };
+
   const updateFilterMenuPosition = useCallback(() => {
     if (openFilterColumn === null) return;
-    const el = filterTriggerRefs.current[openFilterColumn];
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    setFilterMenuStyle({
-      // Flush with header bottom; 1px overlap avoids a dead zone when moving the cursor down
-      top: rect.bottom,
-      left: rect.left,
-      minWidth: Math.max(rect.width, 180),
-    });
+    const geom = getFilterMenuGeometry(openFilterColumn);
+    if (!geom) return;
+    setFilterMenuStyle(geom);
   }, [openFilterColumn]);
 
   useLayoutEffect(() => {
@@ -107,14 +116,9 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
 
   const handleFilterTriggerEnter = (columnIndex) => {
     clearFilterLeaveTimer();
-    const el = filterTriggerRefs.current[columnIndex];
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    setFilterMenuStyle({
-      top: rect.bottom,
-      left: rect.left,
-      minWidth: Math.max(rect.width, 180),
-    });
+    const geom = getFilterMenuGeometry(columnIndex);
+    if (!geom) return;
+    setFilterMenuStyle(geom);
     setOpenFilterColumn(columnIndex);
   };
 
@@ -259,13 +263,24 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                       onMouseLeave={handleFilterTriggerLeave}
                     >
                       <div
-                        className={`flex items-center gap-2 cursor-pointer ${column.align === "text-center" ? "justify-center" : ""}`}
+                        className={
+                          column.align === "text-center"
+                            ? "flex justify-center"
+                            : undefined
+                        }
                       >
-                        {column.label}
-                        <FontAwesomeIcon
-                          icon={faChevronDown}
-                          className="text-xs opacity-70"
-                        />
+                        <div
+                          ref={(el) => {
+                            filterLabelRefs.current[columnIndex] = el;
+                          }}
+                          className="inline-flex items-center gap-2 cursor-pointer"
+                        >
+                          {column.label}
+                          <FontAwesomeIcon
+                            icon={faChevronDown}
+                            className="text-xs opacity-70"
+                          />
+                        </div>
                       </div>
                     </th>
                   ))}
@@ -330,11 +345,10 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
 
       {openFilterColumn !== null && (
         <div
-          className="fixed z-[200] max-h-[250px] min-w-[180px] overflow-y-auto bg-white rounded-lg shadow-xl border border-slate-100"
+          className="fixed z-[200] inline-block align-top max-h-[250px] max-w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden bg-white rounded-lg shadow-xl border border-slate-100"
           style={{
             top: filterMenuStyle.top,
             left: filterMenuStyle.left,
-            minWidth: filterMenuStyle.minWidth,
           }}
           onMouseEnter={handleFilterMenuEnter}
           onMouseLeave={handleFilterMenuLeave}
@@ -347,7 +361,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                 applyFilter(columns[openFilterColumn].key, option);
                 setOpenFilterColumn(null);
               }}
-              className="w-full text-left px-4 py-2 text-slate-700 text-sm hover:bg-slate-100 transition-colors"
+              className="block max-w-full text-left px-4 py-2 text-slate-700 text-sm whitespace-normal break-words hover:bg-slate-100 transition-colors"
             >
               {option}
             </button>
