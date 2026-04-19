@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
@@ -56,12 +56,95 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
     year: "",
     type: "",
   });
+  /** 0–3 = filter column index; fixed-position menu escapes overflow clipping */
+  const [openFilterColumn, setOpenFilterColumn] = useState(null);
+  const [filterMenuStyle, setFilterMenuStyle] = useState({
+    top: 0,
+    left: 0,
+    minWidth: 180,
+  });
+  const filterTriggerRefs = useRef([]);
+  const tableScrollRef = useRef(null);
+  const filterLeaveTimerRef = useRef(null);
+
+  const clearFilterLeaveTimer = () => {
+    if (filterLeaveTimerRef.current) {
+      clearTimeout(filterLeaveTimerRef.current);
+      filterLeaveTimerRef.current = null;
+    }
+  };
+
+  const updateFilterMenuPosition = useCallback(() => {
+    if (openFilterColumn === null) return;
+    const el = filterTriggerRefs.current[openFilterColumn];
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    setFilterMenuStyle({
+      // Flush with header bottom; 1px overlap avoids a dead zone when moving the cursor down
+      top: rect.bottom,
+      left: rect.left,
+      minWidth: Math.max(rect.width, 180),
+    });
+  }, [openFilterColumn]);
+
+  useLayoutEffect(() => {
+    updateFilterMenuPosition();
+  }, [updateFilterMenuPosition]);
+
+  useEffect(() => {
+    if (openFilterColumn === null) return;
+    const onScrollOrResize = () => updateFilterMenuPosition();
+    window.addEventListener("scroll", onScrollOrResize, true);
+    window.addEventListener("resize", onScrollOrResize);
+    const scrollEl = tableScrollRef.current;
+    if (scrollEl) scrollEl.addEventListener("scroll", onScrollOrResize);
+    return () => {
+      window.removeEventListener("scroll", onScrollOrResize, true);
+      window.removeEventListener("resize", onScrollOrResize);
+      if (scrollEl) scrollEl.removeEventListener("scroll", onScrollOrResize);
+    };
+  }, [openFilterColumn, updateFilterMenuPosition]);
+
+  const handleFilterTriggerEnter = (columnIndex) => {
+    clearFilterLeaveTimer();
+    const el = filterTriggerRefs.current[columnIndex];
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    setFilterMenuStyle({
+      top: rect.bottom,
+      left: rect.left,
+      minWidth: Math.max(rect.width, 180),
+    });
+    setOpenFilterColumn(columnIndex);
+  };
+
+  const handleFilterTriggerLeave = () => {
+    filterLeaveTimerRef.current = setTimeout(() => {
+      setOpenFilterColumn(null);
+    }, 150);
+  };
+
+  const handleFilterMenuEnter = () => {
+    clearFilterLeaveTimer();
+  };
+
+  const handleFilterMenuLeave = () => {
+    setOpenFilterColumn(null);
+  };
 
   useEffect(() => {
     setFilteredRecords(initialExamRecords);
     setAvailableFilterOptions(getAvailableFilterOptions(initialExamRecords));
     setActiveFilters({ subject: "", teacher: "", year: "", type: "" });
+    setOpenFilterColumn(null);
   }, [initialExamRecords]);
+
+  useEffect(
+    () => () => {
+      clearFilterLeaveTimer();
+    },
+    [],
+  );
 
   const applyFilter = (filterCategory, filterValue) => {
     let filtered;
@@ -158,38 +241,31 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
         </span>
       </div>
 
-      {/* Table */}
-      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+      {/* Table — no overflow-hidden on card so filters are not clipped; horizontal scroll is isolated */}
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg">
         {filteredRecords.length > 0 ? (
-          <div className="overflow-x-auto">
+          <div ref={tableScrollRef} className="overflow-x-auto">
             <table className="w-full min-w-[800px]">
               <thead>
                 <tr className="bg-slate-900">
                   {columns.map((column, columnIndex) => (
                     <th
                       key={column.key}
-                      className={`${column.width} px-4 py-4 ${column.align} text-white text-sm font-medium relative group`}
+                      ref={(el) => {
+                        filterTriggerRefs.current[columnIndex] = el;
+                      }}
+                      className={`${column.width} px-4 py-4 ${column.align} text-white text-sm font-medium`}
+                      onMouseEnter={() => handleFilterTriggerEnter(columnIndex)}
+                      onMouseLeave={handleFilterTriggerLeave}
                     >
-                      <div className={`flex items-center gap-2 cursor-pointer ${column.align === 'text-center' ? 'justify-center' : ''}`}>
+                      <div
+                        className={`flex items-center gap-2 cursor-pointer ${column.align === "text-center" ? "justify-center" : ""}`}
+                      >
                         {column.label}
                         <FontAwesomeIcon
                           icon={faChevronDown}
                           className="text-xs opacity-70"
                         />
-                      </div>
-                      {/* Dropdown */}
-                      <div className="absolute left-0 top-full mt-1 min-w-[180px] max-h-[250px] overflow-y-auto bg-white rounded-lg shadow-xl z-50 hidden group-hover:block">
-                        {availableFilterOptions[columnIndex].map(
-                          (option, optionIndex) => (
-                            <button
-                              key={optionIndex}
-                              onClick={() => applyFilter(column.key, option)}
-                              className="w-full text-left px-4 py-2 text-slate-700 text-sm hover:bg-slate-100 transition-colors"
-                            >
-                              {option}
-                            </button>
-                          ),
-                        )}
                       </div>
                     </th>
                   ))}
@@ -251,6 +327,33 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
           </div>
         )}
       </div>
+
+      {openFilterColumn !== null && (
+        <div
+          className="fixed z-[200] max-h-[250px] min-w-[180px] overflow-y-auto bg-white rounded-lg shadow-xl border border-slate-100"
+          style={{
+            top: filterMenuStyle.top,
+            left: filterMenuStyle.left,
+            minWidth: filterMenuStyle.minWidth,
+          }}
+          onMouseEnter={handleFilterMenuEnter}
+          onMouseLeave={handleFilterMenuLeave}
+        >
+          {availableFilterOptions[openFilterColumn].map((option, optionIndex) => (
+            <button
+              key={optionIndex}
+              type="button"
+              onClick={() => {
+                applyFilter(columns[openFilterColumn].key, option);
+                setOpenFilterColumn(null);
+              }}
+              className="w-full text-left px-4 py-2 text-slate-700 text-sm hover:bg-slate-100 transition-colors"
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
