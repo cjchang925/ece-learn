@@ -28,54 +28,59 @@ const Navbar = ({ onCategorySelect, onLogout, userName, activeNavItemId }) => {
   return (
     <nav className="sticky top-0 z-50 bg-slate-900 shadow-lg">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16 gap-4">
-          {/* Brand */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">
+        {/* 1fr | auto | 1fr keeps the nav cluster truly centered regardless of brand / greeting width */}
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-16 gap-4">
+          {/* Brand + greeting (left column) */}
+          <div className="flex items-center gap-3 min-w-0 justify-self-start">
+            <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
               EE
             </div>
-            <span className="text-white font-medium hidden sm:block">
+            <span className="text-white font-medium hidden sm:block truncate">
               Hi, {userName}
             </span>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex flex-1 items-center justify-center gap-1 min-w-0">
-            {navItems.map((item) => (
+          {/* Center column: wrapper stays in DOM so grid placement is stable on mobile (nav inner is lg-only) */}
+          <div className="col-start-2 flex items-center justify-center min-w-0 max-w-full">
+            <div className="hidden lg:flex items-center justify-center gap-1 min-w-0 max-w-full">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => handleCategoryClick(item.id)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+                    ${
+                      activeNavItemId === item.id
+                        ? "bg-blue-500 text-white shadow-md"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
+                    }`}
+                >
+                  {item.label}
+                </button>
+              ))}
               <button
-                key={item.id}
                 type="button"
-                onClick={() => handleCategoryClick(item.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                  ${
-                    activeNavItemId === item.id
-                      ? "bg-blue-500 text-white shadow-md"
-                      : "text-white/80 hover:text-white hover:bg-white/10"
-                  }`}
+                onClick={onLogout}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200 ml-2"
               >
-                {item.label}
+                登出
               </button>
-            ))}
-            <button
-              type="button"
-              onClick={onLogout}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200 ml-2"
-            >
-              登出
-            </button>
+            </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            type="button"
-            onClick={toggleMobileMenu}
-            className="lg:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors shrink-0"
-          >
-            <FontAwesomeIcon
-              icon={isMobileMenuOpen ? faTimes : faBars}
-              className="text-xl"
-            />
-          </button>
+          {/* Mobile menu button (right column mirrors left for balanced centering on desktop) */}
+          <div className="flex justify-end items-center justify-self-end min-w-0">
+            <button
+              type="button"
+              onClick={toggleMobileMenu}
+              className="lg:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors shrink-0"
+            >
+              <FontAwesomeIcon
+                icon={isMobileMenuOpen ? faTimes : faBars}
+                className="text-xl"
+              />
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
