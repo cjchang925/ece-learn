@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCloudUploadAlt,
@@ -8,7 +9,33 @@ import {
   faCheckCircle,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
-import { API_ENDPOINTS, API_MESSAGES } from "../../constants";
+import {
+  API_ENDPOINTS,
+  API_MESSAGES,
+  EXAM_COLUMNS,
+} from "../../constants";
+
+const MAX_SUGGESTIONS = 40;
+
+function collectUniqueColumnValues(rows, columnIndex) {
+  const set = new Set();
+  for (const row of rows) {
+    const raw = row[columnIndex];
+    if (raw == null) continue;
+    const s = String(raw).trim();
+    if (s) set.add(s);
+  }
+  return [...set].sort((a, b) => a.localeCompare(b, "zh-Hant"));
+}
+
+function filterByPrefix(candidates, query) {
+  const q = query.trim();
+  if (!q) return [];
+  const lower = q.toLowerCase();
+  return candidates
+    .filter((name) => name.toLowerCase().startsWith(lower))
+    .slice(0, MAX_SUGGESTIONS);
+}
 
 const INITIAL_FORM_STATE = {
   grade: "",
@@ -22,7 +49,97 @@ const UploadFile = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
+  const [referenceSubjects, setReferenceSubjects] = useState([]);
+  const [referenceTeachers, setReferenceTeachers] = useState([]);
+  const [subjectSuggestionsActive, setSubjectSuggestionsActive] =
+    useState(false);
+  const [teacherSuggestionsActive, setTeacherSuggestionsActive] =
+    useState(false);
   const fileInputRef = useRef(null);
+  const subjectBlurTimerRef = useRef(null);
+  const teacherBlurTimerRef = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [one, two, adv, other] = await Promise.all([
+          axios.get(API_ENDPOINTS.FIRST_YEAR_EXAMS),
+          axios.get(API_ENDPOINTS.SECOND_YEAR_EXAMS),
+          axios.get(API_ENDPOINTS.ADVANCED_EXAMS),
+          axios.get(API_ENDPOINTS.OTHER_EXAMS),
+        ]);
+        if (cancelled) return;
+        const allRows = [
+          ...one.data,
+          ...two.data,
+          ...adv.data,
+          ...other.data,
+        ];
+        setReferenceSubjects(
+          collectUniqueColumnValues(allRows, EXAM_COLUMNS.SUBJECT),
+        );
+        setReferenceTeachers(
+          collectUniqueColumnValues(allRows, EXAM_COLUMNS.TEACHER),
+        );
+      } catch (e) {
+        console.error("Failed to load exam names for upload hints:", e);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const subjectSuggestions = useMemo(
+    () => filterByPrefix(referenceSubjects, formData.subject),
+    [referenceSubjects, formData.subject],
+  );
+
+  const teacherSuggestions = useMemo(
+    () => filterByPrefix(referenceTeachers, formData.teacher),
+    [referenceTeachers, formData.teacher],
+  );
+
+  const clearSubjectBlurTimer = useCallback(() => {
+    if (subjectBlurTimerRef.current) {
+      clearTimeout(subjectBlurTimerRef.current);
+      subjectBlurTimerRef.current = null;
+    }
+  }, []);
+
+  const clearTeacherBlurTimer = useCallback(() => {
+    if (teacherBlurTimerRef.current) {
+      clearTimeout(teacherBlurTimerRef.current);
+      teacherBlurTimerRef.current = null;
+    }
+  }, []);
+
+  const handleSubjectFieldChange = (event) => {
+    setFormData((prev) => ({
+      ...prev,
+      subject: event.target.value,
+    }));
+    setSubjectSuggestionsActive(true);
+  };
+
+  const handleTeacherFieldChange = (event) => {
+    setFormData((prev) => ({
+      ...prev,
+      teacher: event.target.value,
+    }));
+    setTeacherSuggestionsActive(true);
+  };
+
+  const selectSubjectSuggestion = (value) => {
+    setFormData((prev) => ({ ...prev, subject: value }));
+    setSubjectSuggestionsActive(false);
+  };
+
+  const selectTeacherSuggestion = (value) => {
+    setFormData((prev) => ({ ...prev, teacher: value }));
+    setTeacherSuggestionsActive(false);
+  };
 
   const isFormValid = () => {
     return (
@@ -48,6 +165,14 @@ const UploadFile = () => {
       [fieldName]: event.target.value,
     }));
   };
+
+  useEffect(
+    () => () => {
+      clearSubjectBlurTimer();
+      clearTeacherBlurTimer();
+    },
+    [clearSubjectBlurTimer, clearTeacherBlurTimer],
+  );
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -135,32 +260,102 @@ const UploadFile = () => {
               </select>
             </div>
 
-            {/* Subject */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+            {/* Subject — prefix suggestions from all exam records */}
+            <div className="relative">
+              <label
+                htmlFor="upload-subject"
+                className="block text-sm font-medium text-slate-700 mb-2"
+              >
                 科目全名 <span className="text-red-500">*</span>
               </label>
               <input
+                id="upload-subject"
                 type="text"
+                autoComplete="off"
                 className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 placeholder="例如：微積分(一)"
                 value={formData.subject}
-                onChange={handleFieldChange("subject")}
+                onChange={handleSubjectFieldChange}
+                onFocus={() => {
+                  clearSubjectBlurTimer();
+                  setSubjectSuggestionsActive(true);
+                }}
+                onBlur={() => {
+                  clearSubjectBlurTimer();
+                  subjectBlurTimerRef.current = setTimeout(() => {
+                    setSubjectSuggestionsActive(false);
+                  }, 200);
+                }}
               />
+              {subjectSuggestionsActive &&
+                formData.subject.trim().length > 0 &&
+                subjectSuggestions.length > 0 && (
+                  <ul className="absolute z-30 left-0 right-0 top-full mt-0.5 max-h-56 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg py-1">
+                    {subjectSuggestions.map((name) => (
+                      <li key={name}>
+                        <button
+                          type="button"
+                          className="w-full text-left px-4 py-2.5 text-sm text-slate-800 hover:bg-slate-100 transition-colors"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            selectSubjectSuggestion(name);
+                          }}
+                        >
+                          {name}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
             </div>
 
-            {/* Teacher */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+            {/* Teacher — same prefix logic */}
+            <div className="relative">
+              <label
+                htmlFor="upload-teacher"
+                className="block text-sm font-medium text-slate-700 mb-2"
+              >
                 教師姓名 <span className="text-red-500">*</span>
               </label>
               <input
+                id="upload-teacher"
                 type="text"
+                autoComplete="off"
                 className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 placeholder="例如：莊重"
                 value={formData.teacher}
-                onChange={handleFieldChange("teacher")}
+                onChange={handleTeacherFieldChange}
+                onFocus={() => {
+                  clearTeacherBlurTimer();
+                  setTeacherSuggestionsActive(true);
+                }}
+                onBlur={() => {
+                  clearTeacherBlurTimer();
+                  teacherBlurTimerRef.current = setTimeout(() => {
+                    setTeacherSuggestionsActive(false);
+                  }, 200);
+                }}
               />
+              {teacherSuggestionsActive &&
+                formData.teacher.trim().length > 0 &&
+                teacherSuggestions.length > 0 && (
+                  <ul className="absolute z-30 left-0 right-0 top-full mt-0.5 max-h-56 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg py-1">
+                    {teacherSuggestions.map((name) => (
+                      <li key={name}>
+                        <button
+                          type="button"
+                          className="w-full text-left px-4 py-2.5 text-sm text-slate-800 hover:bg-slate-100 transition-colors"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            selectTeacherSuggestion(name);
+                          }}
+                        >
+                          {name}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
             </div>
 
             {/* Year */}
@@ -207,7 +402,6 @@ const UploadFile = () => {
             />
             <p className="text-sm text-primary-700">
               請確保上傳的檔案不包含個人資訊，並且您有權分享此檔案。
-              支援的檔案格式：PDF、圖片、Word、壓縮檔等。
             </p>
           </div>
 

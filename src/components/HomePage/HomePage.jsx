@@ -1,20 +1,9 @@
 import React, { useMemo } from "react";
-import { FaBook, FaHeart, FaSearch, FaUpload, FaList } from "react-icons/fa";
+import { FaBook, FaHeart } from "react-icons/fa";
 import Footer from "../Footer/Footer.jsx";
-import {
-  GRADE_CATEGORIES,
-  VIEW_TYPES,
-  EXTERNAL_URLS,
-  EXAM_COLUMNS,
-} from "../../constants";
+import { EXTERNAL_URLS, EXAM_COLUMNS } from "../../constants";
 
-const HomePage = ({ onNavigate, examDataByCategory }) => {
-  const handleActionClick = (action) => {
-    if (onNavigate) {
-      onNavigate(action);
-    }
-  };
-
+const HomePage = ({ examDataByCategory }) => {
   // Calculate statistics from exam data
   const statistics = useMemo(() => {
     const allExams = Object.values(examDataByCategory).flat();
@@ -102,7 +91,6 @@ const HomePage = ({ onNavigate, examDataByCategory }) => {
             <div className="p-6 space-y-4">
               {[
                 "考古資源是學長姐慢慢累積出來的，請不要惡意使用。",
-                "右上方支援搜尋功能，搜尋到的文字會被 Highlight。",
                 "如果要用 Filter，請先選科目再選其他。",
                 "上傳考古題前請確認老師意願，若有侵權問題請自行負責。",
               ].map((text, index) => (
@@ -148,53 +136,6 @@ const HomePage = ({ onNavigate, examDataByCategory }) => {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white py-12 md:py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-slate-800 mb-10">
-            快速開始
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <button
-              onClick={() => handleActionClick(GRADE_CATEGORIES.FIRST_YEAR)}
-              className="group p-8 bg-blue-500 hover:bg-blue-600 rounded-2xl text-white text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                <FaSearch />
-              </div>
-              <div className="text-lg font-bold mb-2">搜尋考古題</div>
-              <div className="text-white/80 text-sm">
-                使用關鍵字快速找到需要的資源
-              </div>
-            </button>
-
-            <button
-              onClick={() => handleActionClick(VIEW_TYPES.WISH_LIST)}
-              className="group p-8 bg-teal-500 hover:bg-teal-600 rounded-2xl text-white text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                <FaList />
-              </div>
-              <div className="text-lg font-bold mb-2">願望清單</div>
-              <div className="text-white/80 text-sm">查看大家許下的願望</div>
-            </button>
-
-            <button
-              onClick={() => handleActionClick(VIEW_TYPES.UPLOAD)}
-              className="group p-8 bg-purple-600 hover:bg-purple-700 rounded-2xl text-white text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                <FaUpload />
-              </div>
-              <div className="text-lg font-bold mb-2">上傳分享</div>
-              <div className="text-white/80 text-sm">
-                分享你的考古題幫助學弟妹
-              </div>
-            </button>
           </div>
         </div>
       </div>

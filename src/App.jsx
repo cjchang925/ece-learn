@@ -18,7 +18,7 @@ import {
 } from "./constants";
 
 // Set to true to bypass login for UI testing (remember to set back to false!)
-const UI_TEST_MODE = false;
+const UI_TEST_MODE = true;
 
 function App() {
   const [examDataByCategory, setExamDataByCategory] = useState({
@@ -27,14 +27,32 @@ function App() {
     [GRADE_CATEGORIES.ADVANCED]: [],
     [GRADE_CATEGORIES.OTHER]: [],
   });
-  const [currentCategoryExams, setCurrentCategoryExams] = useState([]);
-  const [filteredExams, setFilteredExams] = useState(
-    JSON.parse(window.localStorage.getItem(STORAGE_KEYS.FILTERED_EXAMS)) || [],
-  );
-  const [currentView, setCurrentView] = useState(
-    JSON.parse(window.localStorage.getItem(STORAGE_KEYS.CURRENT_VIEW)) ||
-      VIEW_TYPES.HOME,
-  );
+  const [filteredExams, setFilteredExams] = useState(() => {
+    try {
+      const raw = window.sessionStorage.getItem(STORAGE_KEYS.FILTERED_EXAMS);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [currentView, setCurrentView] = useState(() => {
+    try {
+      const raw = window.sessionStorage.getItem(STORAGE_KEYS.CURRENT_VIEW);
+      return raw ? JSON.parse(raw) : VIEW_TYPES.HOME;
+    } catch {
+      return VIEW_TYPES.HOME;
+    }
+  });
+  const [selectedGradeCategory, setSelectedGradeCategory] = useState(() => {
+    try {
+      const raw = window.sessionStorage.getItem(
+        STORAGE_KEYS.SELECTED_GRADE_CATEGORY,
+      );
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  });
   const [isLoggedIn, setIsLoggedIn] = useState(
     UI_TEST_MODE ||
       JSON.parse(window.localStorage.getItem(STORAGE_KEYS.LOGIN_STATE)) ||
@@ -44,6 +62,11 @@ function App() {
     window.localStorage.getItem(STORAGE_KEYS.USER_NAME) || "Test User",
   );
   const [isCheckingAuth, setIsCheckingAuth] = useState(!UI_TEST_MODE);
+
+  useEffect(() => {
+    window.localStorage.removeItem(STORAGE_KEYS.CURRENT_VIEW);
+    window.localStorage.removeItem(STORAGE_KEYS.FILTERED_EXAMS);
+  }, []);
 
   useEffect(() => {
     const fetchAllExamData = async () => {
@@ -114,88 +137,37 @@ function App() {
 
     if (nonExamViews.includes(category)) {
       setCurrentView(category);
-      window.localStorage.setItem(
+      setSelectedGradeCategory(null);
+      window.sessionStorage.setItem(
         STORAGE_KEYS.CURRENT_VIEW,
         JSON.stringify(category),
       );
+      window.sessionStorage.removeItem(STORAGE_KEYS.SELECTED_GRADE_CATEGORY);
     } else {
       setCurrentView(VIEW_TYPES.EXAM_LIST);
-      window.localStorage.setItem(
+      setSelectedGradeCategory(category);
+      window.sessionStorage.setItem(
         STORAGE_KEYS.CURRENT_VIEW,
         JSON.stringify(VIEW_TYPES.EXAM_LIST),
+      );
+      window.sessionStorage.setItem(
+        STORAGE_KEYS.SELECTED_GRADE_CATEGORY,
+        JSON.stringify(category),
       );
 
       const categoryData = examDataByCategory[category] || [];
       setFilteredExams(categoryData);
-      setCurrentCategoryExams(categoryData);
-      window.localStorage.setItem(
+      window.sessionStorage.setItem(
         STORAGE_KEYS.FILTERED_EXAMS,
         JSON.stringify(categoryData),
       );
     }
   };
 
-  const handleSearchFilter = (searchQuery) => {
-    setCurrentView(VIEW_TYPES.EXAM_LIST);
-    window.localStorage.setItem(
-      STORAGE_KEYS.CURRENT_VIEW,
-      JSON.stringify(VIEW_TYPES.EXAM_LIST),
-    );
-
-    if (searchQuery === "") {
-      setFilteredExams(currentCategoryExams);
-      window.localStorage.setItem(
-        STORAGE_KEYS.FILTERED_EXAMS,
-        JSON.stringify(currentCategoryExams),
-      );
-      return;
-    }
-
-    const searchRegex = new RegExp(searchQuery, "gi");
-
-    const highlightedResults = currentCategoryExams.reduce(
-      (results, examRecord) => {
-        let hasMatch = false;
-
-        for (let i = 0; i < examRecord.length - 1 && !hasMatch; ++i) {
-          if (examRecord[i].match(searchRegex)) {
-            hasMatch = true;
-          }
-        }
-
-        if (hasMatch) {
-          const highlightedRecord = examRecord.map((column, columnIndex) => {
-            if (columnIndex === 6) return column;
-
-            const matchResult = searchRegex.exec(column);
-            if (matchResult) {
-              return (
-                <span key={columnIndex}>
-                  {column.substr(0, matchResult.index)}
-                  <span className="bg-yellow-200 px-0.5 rounded">
-                    {column.substr(matchResult.index, matchResult[0].length)}
-                  </span>
-                  {column.substr(matchResult.index + matchResult[0].length)}
-                </span>
-              );
-            }
-            return column;
-          });
-
-          results.push(highlightedRecord);
-        }
-
-        return results;
-      },
-      [],
-    );
-
-    setFilteredExams(highlightedResults);
-    window.localStorage.setItem(
-      STORAGE_KEYS.FILTERED_EXAMS,
-      JSON.stringify(highlightedResults),
-    );
-  };
+  const activeNavItemId =
+    currentView === VIEW_TYPES.EXAM_LIST
+      ? selectedGradeCategory
+      : currentView;
 
   const handleLogout = () => {
     fetch(API_ENDPOINTS.LOGOUT, {
@@ -204,8 +176,9 @@ function App() {
     });
 
     window.localStorage.removeItem(STORAGE_KEYS.USER_NAME);
-    window.localStorage.removeItem(STORAGE_KEYS.FILTERED_EXAMS);
-    window.localStorage.removeItem(STORAGE_KEYS.CURRENT_VIEW);
+    window.sessionStorage.removeItem(STORAGE_KEYS.FILTERED_EXAMS);
+    window.sessionStorage.removeItem(STORAGE_KEYS.CURRENT_VIEW);
+    window.sessionStorage.removeItem(STORAGE_KEYS.SELECTED_GRADE_CATEGORY);
     window.localStorage.removeItem(STORAGE_KEYS.LOGIN_STATE);
     setIsLoggedIn(false);
   };
@@ -225,12 +198,7 @@ function App() {
   const renderCurrentView = () => {
     switch (currentView) {
       case VIEW_TYPES.HOME:
-        return (
-          <HomePage
-            onNavigate={handleCategorySelect}
-            examDataByCategory={examDataByCategory}
-          />
-        );
+        return <HomePage examDataByCategory={examDataByCategory} />;
       case VIEW_TYPES.WISH_LIST:
         return <WishCardList />;
       case VIEW_TYPES.UPLOAD:
@@ -270,9 +238,9 @@ function App() {
         </Helmet>
         <Navbar
           onCategorySelect={handleCategorySelect}
-          onSearchChange={handleSearchFilter}
           onLogout={handleLogout}
           userName={userName}
+          activeNavItemId={activeNavItemId}
         />
         {renderCurrentView()}
       </div>

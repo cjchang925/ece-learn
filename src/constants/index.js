@@ -16,10 +16,11 @@ export const GOOGLE_API = {
   USER_INFO: 'https://www.googleapis.com/oauth2/v1/userinfo',
 };
 
-// LocalStorage Keys
+// LocalStorage / sessionStorage keys (see App.jsx for which store each uses)
 export const STORAGE_KEYS = {
   FILTERED_EXAMS: 'display_data',
   CURRENT_VIEW: 'showList',
+  SELECTED_GRADE_CATEGORY: 'selected_grade_category',
   LOGIN_STATE: 'loginState',
   USER_NAME: 'name',
 };
