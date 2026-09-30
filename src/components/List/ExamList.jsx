@@ -14,31 +14,23 @@ import {
 import { EXAM_COLUMNS } from "../../constants";
 import SelectField from "../SelectField/SelectField.jsx";
 
+/** Filter menu options, keyed by filterable column */
 function getAvailableFilterOptions(examRecords) {
-  return [
-    [
+  return {
+    subject: [
       ...new Set(
         examRecords.map((record) => record[EXAM_COLUMNS.SUBJECT]).sort(),
       ),
     ],
-    [
+    teacher: [
       ...new Set(
         examRecords.map((record) => record[EXAM_COLUMNS.TEACHER]).sort(),
       ),
     ],
-    [
-      ...new Set(
-        examRecords
-          .map((record) => record[EXAM_COLUMNS.YEAR])
-          .sort((a, b) => {
-            const numA = Number(a.replace(/[^\d.]/g, ""));
-            const numB = Number(b.replace(/[^\d.]/g, ""));
-            return numA - numB;
-          }),
-      ),
+    type: [
+      ...new Set(examRecords.map((record) => record[EXAM_COLUMNS.TYPE]).sort()),
     ],
-    [...new Set(examRecords.map((record) => record[EXAM_COLUMNS.TYPE]).sort())],
-  ];
+  };
 }
 
 /**
@@ -77,10 +69,34 @@ function getExamTypeBadgeClass(examType) {
 }
 
 const columns = [
-  { key: "subject", label: "科目", width: "w-[34%]", align: "text-left" },
-  { key: "teacher", label: "教師", width: "w-[13.2%]", align: "text-left" },
-  { key: "year", label: "學年度", width: "w-[13.2%]", align: "text-center" },
-  { key: "type", label: "類別", width: "w-[13.2%]", align: "text-center" },
+  {
+    key: "subject",
+    label: "科目",
+    width: "w-[34%]",
+    align: "text-left",
+    filterable: true,
+  },
+  {
+    key: "teacher",
+    label: "教師",
+    width: "w-[13.2%]",
+    align: "text-left",
+    filterable: true,
+  },
+  {
+    key: "year",
+    label: "學年度",
+    width: "w-[13.2%]",
+    align: "text-center",
+    filterable: false,
+  },
+  {
+    key: "type",
+    label: "類別",
+    width: "w-[13.2%]",
+    align: "text-center",
+    filterable: true,
+  },
 ];
 
 const ExamList = ({ examRecords: initialExamRecords }) => {
@@ -91,7 +107,6 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   const [activeFilters, setActiveFilters] = useState({
     subject: "",
     teacher: "",
-    year: "",
     type: "",
   });
   /** 0–3 = filter column index; fixed-position menu escapes overflow clipping */
@@ -116,15 +131,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
     if (!th) return null;
     const thRect = th.getBoundingClientRect();
     const labelRect = labelEl?.getBoundingClientRect();
-    if (columns[columnIndex].key === "year") {
-      // 學年度: short, uniform options read best centered under the column
-      return {
-        top: thRect.bottom,
-        left: thRect.left + thRect.width / 2,
-        centered: true,
-      };
-    }
-    // Other columns: option text starts where the label's first character does
+    // Option text starts where the label's first character does
     const anchorLeft = labelRect?.left ?? thRect.left;
     return {
       top: thRect.bottom,
@@ -182,7 +189,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   useEffect(() => {
     setFilteredRecords(initialExamRecords);
     setAvailableFilterOptions(getAvailableFilterOptions(initialExamRecords));
-    setActiveFilters({ subject: "", teacher: "", year: "", type: "" });
+    setActiveFilters({ subject: "", teacher: "", type: "" });
     setOpenFilterColumn(null);
   }, [initialExamRecords]);
 
@@ -201,7 +208,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
         (record) => record[EXAM_COLUMNS.SUBJECT] === filterValue,
       );
       const newOptions = getAvailableFilterOptions(filtered);
-      newOptions[0] = [
+      newOptions.subject = [
         ...new Set(
           initialExamRecords
             .map((record) => record[EXAM_COLUMNS.SUBJECT])
@@ -212,7 +219,6 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
       setActiveFilters({
         subject: filterValue,
         teacher: "",
-        year: "",
         type: "",
       });
     } else if (filterCategory === "teacher") {
@@ -225,21 +231,6 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
         return record[EXAM_COLUMNS.TEACHER] === filterValue;
       });
       setActiveFilters((prev) => ({ ...prev, teacher: filterValue }));
-    } else if (filterCategory === "year") {
-      filtered = initialExamRecords.filter((record) => {
-        if (
-          activeFilters.subject &&
-          record[EXAM_COLUMNS.SUBJECT] !== activeFilters.subject
-        )
-          return false;
-        if (
-          activeFilters.teacher &&
-          record[EXAM_COLUMNS.TEACHER] !== activeFilters.teacher
-        )
-          return false;
-        return record[EXAM_COLUMNS.YEAR] === filterValue;
-      });
-      setActiveFilters((prev) => ({ ...prev, year: filterValue }));
     } else if (filterCategory === "type") {
       filtered = initialExamRecords.filter((record) => {
         if (
@@ -250,11 +241,6 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
         if (
           activeFilters.teacher &&
           record[EXAM_COLUMNS.TEACHER] !== activeFilters.teacher
-        )
-          return false;
-        if (
-          activeFilters.year &&
-          record[EXAM_COLUMNS.YEAR] !== activeFilters.year
         )
           return false;
         return record[EXAM_COLUMNS.TYPE] === filterValue;
@@ -302,20 +288,29 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
       {/* Phone filters — the desktop table uses hover menus on its column headers instead */}
       {initialExamRecords.length > 0 && (
         <div className="md:hidden max-w-[56rem] mx-auto mb-4 grid grid-cols-2 gap-3">
-          {columns.map((column, columnIndex) => (
-            <SelectField
-              key={column.key}
-              id={`filter-${column.key}`}
-              label={column.label}
-              placeholder="全部"
-              options={availableFilterOptions[columnIndex].map((option) => ({
-                value: option,
-                label: option,
-              }))}
-              value={activeFilters[column.key]}
-              onChange={(value) => applyFilter(column.key, value)}
-            />
-          ))}
+          {columns
+            .filter((column) => column.filterable)
+            .map((column) => (
+              // 科目 names are long, so it gets the full row; 教師 and 類別 share the next
+              <div
+                key={column.key}
+                className={column.key === "subject" ? "col-span-2" : undefined}
+              >
+                <SelectField
+                  id={`filter-${column.key}`}
+                  label={column.label}
+                  placeholder="全部"
+                  options={availableFilterOptions[column.key].map(
+                    (option) => ({
+                      value: option,
+                      label: option,
+                    }),
+                  )}
+                  value={activeFilters[column.key]}
+                  onChange={(value) => applyFilter(column.key, value)}
+                />
+              </div>
+            ))}
         </div>
       )}
 
@@ -331,6 +326,16 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                 <thead>
                   <tr className="border-b border-separator">
                     {columns.map((column, columnIndex) => {
+                      if (!column.filterable) {
+                        return (
+                          <th
+                            key={column.key}
+                            className={`${column.width} px-5 py-4 ${column.align} text-label-2 text-[13px] font-semibold`}
+                          >
+                            {column.label}
+                          </th>
+                        );
+                      }
                       const isFilterActive = Boolean(activeFilters[column.key]);
                       const isMenuOpen = openFilterColumn === columnIndex;
                       return (
@@ -466,17 +471,15 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
       {openFilterColumn !== null && (
         <div
           key={openFilterColumn}
-          className={`fixed z-[200] inline-block align-top max-h-[280px] max-w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden material-popover rounded-xl p-1.5 animate-materialize ${filterMenuStyle.centered ? "origin-top" : "origin-top-left"}`}
+          className="fixed z-[200] inline-block align-top max-h-[280px] max-w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden material-popover rounded-xl p-1.5 origin-top-left animate-materialize"
           style={{
             top: filterMenuStyle.top,
             left: filterMenuStyle.left,
-            // `translate`, not `transform`, so the open animation's scale doesn't cancel it
-            translate: filterMenuStyle.centered ? "-50% 0" : undefined,
           }}
           onMouseEnter={handleFilterMenuEnter}
           onMouseLeave={handleFilterMenuLeave}
         >
-          {availableFilterOptions[openFilterColumn].map(
+          {availableFilterOptions[columns[openFilterColumn].key].map(
             (option, optionIndex) => {
               const isSelected =
                 activeFilters[columns[openFilterColumn].key] === option;
