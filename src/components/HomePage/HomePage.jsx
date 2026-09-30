@@ -1,6 +1,5 @@
 import React from "react";
 import { FaBook } from "react-icons/fa";
-import Footer from "../Footer/Footer.jsx";
 
 // Hardcoded so the page does not have to count the exam records on every visit
 const STATS = [
@@ -78,7 +77,6 @@ const HomePage = () => {
         </article>
       </section>
 
-      <Footer />
     </div>
   );
 };

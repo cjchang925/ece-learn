@@ -3,7 +3,15 @@ import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { VIEW_TYPES, GRADE_CATEGORIES } from "../../constants";
 
-const Navbar = ({ onCategorySelect, onLogout, userName, activeNavItemId }) => {
+const Navbar = ({
+  onCategorySelect,
+  onLogin,
+  onLogout,
+  isLoggedIn,
+  isCheckingAuth,
+  isSigningIn,
+  activeNavItemId,
+}) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   /** Geometry of the sliding selection pill in the desktop segmented control */
   const [indicator, setIndicator] = useState(null);
@@ -17,6 +25,14 @@ const Navbar = ({ onCategorySelect, onLogout, userName, activeNavItemId }) => {
     setIsMobileMenuOpen(false);
     onCategorySelect(category);
   };
+
+  const handleAuthClick = () => {
+    setIsMobileMenuOpen(false);
+    if (isLoggedIn) onLogout();
+    else onLogin();
+  };
+
+  const authLabel = isLoggedIn ? "登出" : isSigningIn ? "登入中…" : "登入";
 
   const navItems = [
     { id: VIEW_TYPES.HOME, label: "首頁" },
@@ -54,8 +70,8 @@ const Navbar = ({ onCategorySelect, onLogout, userName, activeNavItemId }) => {
             <div className="w-8 h-8 bg-gradient-to-b from-[#2997ff] to-[#0066cc] rounded-[9px] flex items-center justify-center text-white text-xs font-semibold tracking-tight shrink-0 shadow-sm">
               EE
             </div>
-            <span className="text-label-2 text-sm font-medium hidden sm:block truncate">
-              Hi, {userName}
+            <span className="text-label text-[15px] font-semibold tracking-tight truncate">
+              Previous Exams
             </span>
           </div>
 
@@ -97,12 +113,21 @@ const Navbar = ({ onCategorySelect, onLogout, userName, activeNavItemId }) => {
                   );
                 })}
               </div>
+              {/* Hidden (but space-holding) until we know the login state, so the nav does not shift */}
               <button
                 type="button"
-                onClick={onLogout}
-                className="pressable px-3 py-1.5 rounded-full text-[13px] font-medium text-destructive hover:bg-[var(--tint-red-bg)]"
+                onClick={handleAuthClick}
+                disabled={isCheckingAuth || isSigningIn}
+                aria-hidden={isCheckingAuth || undefined}
+                className={`pressable min-w-[3.5rem] px-3 py-1.5 rounded-full text-[13px] font-medium disabled:cursor-default
+                  ${isCheckingAuth ? "invisible" : ""}
+                  ${
+                    isLoggedIn
+                      ? "text-destructive hover:bg-[var(--tint-red-bg)]"
+                      : "text-accent-text hover:bg-accent-tint"
+                  }`}
               >
-                登出
+                {authLabel}
               </button>
             </div>
           </div>
@@ -152,14 +177,21 @@ const Navbar = ({ onCategorySelect, onLogout, userName, activeNavItemId }) => {
                 </button>
               );
             })}
-            <div className="h-px bg-separator mx-3 my-1.5" />
-            <button
-              type="button"
-              onClick={onLogout}
-              className="pressable w-full text-left px-4 py-3 rounded-xl text-[15px] font-medium text-destructive hover:bg-fill"
-            >
-              登出
-            </button>
+            {!isCheckingAuth && (
+              <>
+                <div className="h-px bg-separator mx-3 my-1.5" />
+                <button
+                  type="button"
+                  onClick={handleAuthClick}
+                  disabled={isSigningIn}
+                  className={`pressable w-full text-left px-4 py-3 rounded-xl text-[15px] font-medium hover:bg-fill ${
+                    isLoggedIn ? "text-destructive" : "text-accent-text"
+                  }`}
+                >
+                  {authLabel}
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
