@@ -56,12 +56,9 @@ const Footer = () => {
             Privacy Policy
           </h4>
           <p>
-            No account is needed to browse or download exams. To upload, you
-            sign in with Google OAuth 2.0 and we receive your name, email
-            address and profile picture, used only to verify NYCU membership
-            and manage uploads. We never sell or share this data. A cookie
-            keeps you signed in, and Google Analytics collects anonymous usage
-            statistics. You can revoke access in your{" "}
+            When you sign in with Google to upload, we use your name, email
+            and profile picture only to verify NYCU membership, and never sell
+            or share them. You can revoke access in your{" "}
             <a
               href="https://myaccount.google.com/permissions"
               target="_blank"
@@ -70,7 +67,7 @@ const Footer = () => {
             >
               Google Account
             </a>{" "}
-            at any time; for questions or data deletion, contact us on{" "}
+            or ask us on{" "}
             <a
               href="https://github.com/cjchang925/ece-learn/issues"
               target="_blank"
@@ -78,8 +75,8 @@ const Footer = () => {
               className="text-accent-text hover:underline"
             >
               GitHub
-            </a>
-            .
+            </a>{" "}
+            to delete your data.
           </p>
         </section>
 
