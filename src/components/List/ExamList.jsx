@@ -270,7 +270,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   return (
     <div className="flex-1 bg-canvas px-4 pt-10 pb-16 md:pt-14">
       {/* Header */}
-      <div className="max-w-6xl mx-auto mb-6 flex flex-wrap items-end gap-x-4 gap-y-2">
+      <div className="max-w-[56rem] mx-auto mb-6 flex flex-wrap items-end gap-x-4 gap-y-2">
         <h1 className="text-title-1 text-label">考古題列表</h1>
         <span className="badge tint-gray mb-1 tabular-nums">
           {filteredRecords.length} 筆資料
@@ -279,7 +279,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
 
       {/* Phone filters — the desktop table uses hover menus on its column headers instead */}
       {initialExamRecords.length > 0 && (
-        <div className="md:hidden max-w-6xl mx-auto mb-4 grid grid-cols-2 gap-3">
+        <div className="md:hidden max-w-[56rem] mx-auto mb-4 grid grid-cols-2 gap-3">
           {columns.map((column, columnIndex) => (
             <SelectField
               key={column.key}
@@ -298,7 +298,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
       )}
 
       {/* Table — no overflow-hidden on card so filters are not clipped; horizontal scroll is isolated */}
-      <div className="max-w-6xl mx-auto surface-card animate-fade-up">
+      <div className="max-w-[56rem] mx-auto surface-card animate-fade-up">
         {filteredRecords.length > 0 ? (
           <>
             <div
