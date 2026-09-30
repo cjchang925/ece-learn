@@ -116,14 +116,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
     if (!th) return null;
     const thRect = th.getBoundingClientRect();
     const labelRect = labelEl?.getBoundingClientRect();
-    if (columns[columnIndex].align === "text-center") {
-      // Centered columns: center the menu under the whole column
-      return {
-        top: thRect.bottom,
-        left: thRect.left + thRect.width / 2,
-        transform: "translateX(-50%)",
-      };
-    }
+    // Every column, centered or not: option text starts where the label's first character does
     const anchorLeft = labelRect?.left ?? thRect.left;
     return {
       top: thRect.bottom,
@@ -469,7 +462,6 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
           style={{
             top: filterMenuStyle.top,
             left: filterMenuStyle.left,
-            transform: filterMenuStyle.transform,
           }}
           onMouseEnter={handleFilterMenuEnter}
           onMouseLeave={handleFilterMenuLeave}
