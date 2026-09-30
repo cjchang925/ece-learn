@@ -4,34 +4,363 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Apple-style design tokens.
+ * Colors adapt to light / dark, materials are translucent layers,
+ * and motion uses Apple's critically-damped "ease-out" curve.
+ */
 @layer base {
+  :root {
+    color-scheme: light dark;
+
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --surface-2: #fbfbfd;
+    --fill: rgba(120, 120, 128, 0.12);
+    --fill-2: rgba(120, 120, 128, 0.2);
+    --row-hover: rgba(0, 0, 0, 0.025);
+    --label: #1d1d1f;
+    --label-2: #6e6e73;
+    --label-3: #86868b;
+    --separator: rgba(0, 0, 0, 0.08);
+    --accent: #0071e3;
+    --accent-hover: #0077ed;
+    --accent-tint: rgba(0, 113, 227, 0.1);
+    --accent-text: #0066cc;
+    --destructive: #ff3b30;
+    --chrome: rgba(251, 251, 253, 0.72);
+    --popover: rgba(255, 255, 255, 0.92);
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 24px rgba(0, 0, 0, 0.04);
+    --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.08), 0 16px 48px rgba(0, 0, 0, 0.12);
+
+    --tint-orange-bg: rgba(255, 149, 0, 0.14);
+    --tint-orange-fg: #c93400;
+    --tint-red-bg: rgba(255, 59, 48, 0.12);
+    --tint-red-fg: #d70015;
+    --tint-green-bg: rgba(52, 199, 89, 0.14);
+    --tint-green-fg: #248a3d;
+    --tint-blue-bg: rgba(0, 122, 255, 0.12);
+    --tint-blue-fg: #0040dd;
+    --tint-purple-bg: rgba(175, 82, 222, 0.12);
+    --tint-purple-fg: #8944ab;
+
+    --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000;
+      --surface: #1c1c1e;
+      --surface-2: #161617;
+      --fill: rgba(118, 118, 128, 0.24);
+      --fill-2: rgba(118, 118, 128, 0.36);
+      --row-hover: rgba(255, 255, 255, 0.04);
+      --label: #f5f5f7;
+      --label-2: #a1a1a6;
+      --label-3: #86868b;
+      --separator: rgba(255, 255, 255, 0.1);
+      --accent: #0a84ff;
+      --accent-hover: #409cff;
+      --accent-tint: rgba(10, 132, 255, 0.18);
+      --accent-text: #2997ff;
+      --destructive: #ff453a;
+      --chrome: rgba(22, 22, 23, 0.72);
+      --popover: rgba(44, 44, 46, 0.92);
+      --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.06);
+      --shadow-float: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 16px 48px rgba(0, 0, 0, 0.6);
+
+      --tint-orange-bg: rgba(255, 159, 10, 0.2);
+      --tint-orange-fg: #ffb340;
+      --tint-red-bg: rgba(255, 69, 58, 0.2);
+      --tint-red-fg: #ff6961;
+      --tint-green-bg: rgba(48, 209, 88, 0.2);
+      --tint-green-fg: #30d158;
+      --tint-blue-bg: rgba(10, 132, 255, 0.2);
+      --tint-blue-fg: #409cff;
+      --tint-purple-bg: rgba(191, 90, 242, 0.2);
+      --tint-purple-fg: #da8fff;
+    }
+  }
+
   html {
-    font-family: 'Noto Sans TC', system-ui, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
+      'PingFang TC', 'Helvetica Neue', 'Noto Sans TC', system-ui, sans-serif;
+    font-optical-sizing: auto;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
-    @apply m-0 bg-slate-50 text-slate-900 antialiased;
+    @apply m-0 antialiased;
+    background-color: var(--bg);
+    color: var(--label);
+    font-size: 1.0625rem; /* 17px, Apple body size */
+    line-height: 1.47;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: var(--accent-tint);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--accent-tint);
+    outline-offset: 2px;
   }
 }
 
 @layer components {
-  .btn-primary {
-    @apply inline-flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200;
+  /* ---------- Typography ---------- */
+  .text-large-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-weight: 700;
   }
 
-  .btn-accent {
-    @apply inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200;
+  .text-title-1 {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    font-weight: 700;
   }
 
-  .card {
-    @apply bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200;
+  .text-title-2 {
+    font-size: 1.375rem;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    font-weight: 600;
   }
 
-  .input-field {
-    @apply w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+  .text-footnote {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    letter-spacing: 0;
   }
 
-  .select-field {
-    @apply w-full px-4 py-3 border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 cursor-pointer;
+  /* ---------- Materials ---------- */
+  .material-chrome {
+    background-color: var(--chrome);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  .material-popover {
+    background-color: var(--popover);
+    -webkit-backdrop-filter: saturate(180%) blur(40px);
+    backdrop-filter: saturate(180%) blur(40px);
+    box-shadow: var(--shadow-float);
+  }
+
+  .surface-card {
+    background-color: var(--surface);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+
+  /* ---------- Controls ---------- */
+
+  /* Instant feedback on press (pointer-down), not on release */
+  .pressable {
+    transition:
+      transform 180ms var(--ease-out),
+      background-color 200ms var(--ease-out),
+      color 200ms var(--ease-out),
+      box-shadow 200ms var(--ease-out),
+      opacity 200ms var(--ease-out);
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .pressable:active:not(:disabled) {
+    transform: scale(0.97);
+    transition-duration: 80ms;
+  }
+
+  .btn-filled {
+    @apply pressable inline-flex items-center justify-center gap-2 rounded-full font-medium;
+    background-color: var(--accent);
+    color: #fff;
+    padding: 0.6875rem 1.375rem;
+  }
+
+  .btn-filled:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+  }
+
+  .btn-filled:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .btn-tinted {
+    @apply pressable inline-flex items-center justify-center gap-2 rounded-full font-medium;
+    background-color: var(--accent-tint);
+    color: var(--accent-text);
+    padding: 0.5rem 1.125rem;
+  }
+
+  .btn-tinted:hover {
+    background-color: var(--fill-2);
+  }
+
+  .field {
+    @apply w-full rounded-xl outline-none;
+    background-color: var(--fill);
+    color: var(--label);
+    padding: 0.75rem 1rem;
+    border: 1px solid transparent;
+    transition:
+      background-color 200ms var(--ease-out),
+      box-shadow 200ms var(--ease-out),
+      border-color 200ms var(--ease-out);
+  }
+
+  .field::placeholder {
+    color: var(--label-3);
+  }
+
+  .field:focus {
+    background-color: var(--surface);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-tint);
+  }
+
+  select.field {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 2.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%2386868b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+  }
+
+  .field-label {
+    @apply block text-sm font-medium mb-2;
+    color: var(--label-2);
+  }
+
+  .menu-item {
+    @apply block w-full text-left rounded-lg text-sm;
+    padding: 0.5rem 0.75rem;
+    color: var(--label);
+    transition: background-color 120ms var(--ease-out);
+  }
+
+  .menu-item:hover,
+  .menu-item:focus-visible {
+    background-color: var(--accent);
+    color: #fff;
+    outline: none;
+  }
+
+  /* ---------- Badges (system tint colors) ---------- */
+  .badge {
+    @apply inline-block rounded-full text-sm font-medium;
+    padding: 0.1875rem 0.75rem;
+  }
+
+  .tint-orange { background-color: var(--tint-orange-bg); color: var(--tint-orange-fg); }
+  .tint-red { background-color: var(--tint-red-bg); color: var(--tint-red-fg); }
+  .tint-green { background-color: var(--tint-green-bg); color: var(--tint-green-fg); }
+  .tint-blue { background-color: var(--tint-blue-bg); color: var(--tint-blue-fg); }
+  .tint-purple { background-color: var(--tint-purple-bg); color: var(--tint-purple-fg); }
+  .tint-gray { background-color: var(--fill); color: var(--label-2); }
+
+  /* ---------- Motion ---------- */
+
+  /* Surfaces "materialize" (scale + blur + opacity) from their anchor */
+  .animate-materialize {
+    animation: materialize 260ms var(--ease-out) both;
+  }
+
+  .animate-fade-up {
+    animation: fade-up 500ms var(--ease-out) both;
+  }
+
+  /* iOS-style activity indicator */
+  .activity-indicator {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    border: 3px solid var(--fill-2);
+    border-top-color: var(--label-2);
+    animation: spin 0.9s linear infinite;
+  }
+}
+
+@keyframes materialize {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: none;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-materialize,
+  .animate-fade-up {
+    animation: fade-in 200ms ease both;
+  }
+
+  .pressable:active:not(:disabled) {
+    transform: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+
+  .nav-indicator {
+    transition: none !important;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .material-chrome,
+  .material-popover {
+    background-color: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --separator: rgba(0, 0, 0, 0.3);
+  }
+
+  .material-chrome,
+  .material-popover,
+  .surface-card {
+    border: 1px solid var(--label-3);
   }
 }

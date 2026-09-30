@@ -186,10 +186,10 @@ function App() {
   // Loading screen while checking authentication
   if (isCheckingAuth) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div>
-          <p className="text-white text-lg">Checking authentication...</p>
+      <div className="min-h-screen bg-canvas flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 animate-fade-up">
+          <div className="activity-indicator" role="status" aria-label="Loading" />
+          <p className="text-label-2 text-sm">Checking authentication...</p>
         </div>
       </div>
     );
@@ -211,7 +211,7 @@ function App() {
 
   if (isLoggedIn) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-canvas flex flex-col">
         <Helmet>
           <title>交大電機考古網站</title>
           <meta

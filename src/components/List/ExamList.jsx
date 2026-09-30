@@ -39,13 +39,11 @@ const FILTER_MENU_NUDGE_LEFT_PX = 16;
 
 function getExamTypeBadgeClass(examType) {
   const type = String(examType).toLowerCase();
-  if (type.includes("期中")) return "bg-amber-100 text-amber-700";
-  if (type.includes("期末")) return "bg-rose-100 text-rose-700";
-  if (type.includes("小考") || type.includes("quiz"))
-    return "bg-emerald-100 text-emerald-700";
-  if (type.includes("作業") || type.includes("hw"))
-    return "bg-blue-100 text-blue-700";
-  return "bg-purple-100 text-purple-700";
+  if (type.includes("期中")) return "tint-orange";
+  if (type.includes("期末")) return "tint-red";
+  if (type.includes("小考") || type.includes("quiz")) return "tint-green";
+  if (type.includes("作業") || type.includes("hw")) return "tint-blue";
+  return "tint-purple";
 }
 
 const ExamList = ({ examRecords: initialExamRecords }) => {
@@ -230,58 +228,64 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-6">
+    <div className="min-h-screen bg-canvas px-4 pt-10 pb-16 md:pt-14">
       {/* Header */}
-      <div className="max-w-6xl mx-auto mb-6 flex items-center gap-4">
-        <h1 className="text-2xl font-bold text-slate-800">考古題列表</h1>
-        <span className="px-4 py-1 bg-blue-500 text-white text-sm font-medium rounded-full">
+      <div className="max-w-6xl mx-auto mb-6 flex flex-wrap items-end gap-x-4 gap-y-2">
+        <h1 className="text-title-1 text-label">考古題列表</h1>
+        <span className="badge tint-gray mb-1 tabular-nums">
           {filteredRecords.length} 筆資料
         </span>
       </div>
 
       {/* Table — no overflow-hidden on card so filters are not clipped; horizontal scroll is isolated */}
-      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg">
+      <div className="max-w-6xl mx-auto surface-card animate-fade-up">
         {filteredRecords.length > 0 ? (
           <div ref={tableScrollRef} className="overflow-x-auto">
             <table className="w-full min-w-[800px]">
               <thead>
-                <tr className="bg-slate-900">
-                  {columns.map((column, columnIndex) => (
-                    <th
-                      key={column.key}
-                      ref={(el) => {
-                        filterTriggerRefs.current[columnIndex] = el;
-                      }}
-                      className={`${column.width} px-4 py-4 ${column.align} text-white text-sm font-medium`}
-                      onMouseEnter={() => handleFilterTriggerEnter(columnIndex)}
-                      onMouseLeave={handleFilterTriggerLeave}
-                    >
-                      <div
-                        className={
-                          column.align === "text-center"
-                            ? "flex justify-center"
-                            : undefined
-                        }
+                <tr className="border-b border-separator">
+                  {columns.map((column, columnIndex) => {
+                    const isFilterActive = Boolean(activeFilters[column.key]);
+                    const isMenuOpen = openFilterColumn === columnIndex;
+                    return (
+                      <th
+                        key={column.key}
+                        ref={(el) => {
+                          filterTriggerRefs.current[columnIndex] = el;
+                        }}
+                        className={`${column.width} px-5 py-4 ${column.align} text-[13px] font-semibold`}
+                        onMouseEnter={() => handleFilterTriggerEnter(columnIndex)}
+                        onMouseLeave={handleFilterTriggerLeave}
                       >
                         <div
-                          ref={(el) => {
-                            filterLabelRefs.current[columnIndex] = el;
-                          }}
-                          className="inline-flex items-center gap-2 cursor-pointer"
+                          className={
+                            column.align === "text-center"
+                              ? "flex justify-center"
+                              : undefined
+                          }
                         >
-                          {column.label}
-                          <FontAwesomeIcon
-                            icon={faChevronDown}
-                            className="text-xs opacity-70"
-                          />
+                          <div
+                            ref={(el) => {
+                              filterLabelRefs.current[columnIndex] = el;
+                            }}
+                            className={`inline-flex items-center gap-1.5 cursor-pointer -mx-2 px-2 py-1 rounded-md transition-colors duration-200
+                              ${isMenuOpen ? "bg-fill" : ""}
+                              ${isFilterActive ? "text-accent-text" : "text-label-2"}`}
+                          >
+                            {column.label}
+                            <FontAwesomeIcon
+                              icon={faChevronDown}
+                              className={`text-[10px] transition-transform duration-300 ease-apple ${isMenuOpen ? "rotate-180" : ""}`}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </th>
-                  ))}
-                  <th className="w-[22%] px-4 py-4 text-left text-white text-sm font-medium">
+                      </th>
+                    );
+                  })}
+                  <th className="w-[22%] px-5 py-4 text-left text-label-2 text-[13px] font-semibold">
                     備註
                   </th>
-                  <th className="w-[20%] px-4 py-4 text-center text-white text-sm font-medium">
+                  <th className="w-[20%] px-5 py-4 text-center text-label-2 text-[13px] font-semibold">
                     檔案
                   </th>
                 </tr>
@@ -290,39 +294,39 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                 {filteredRecords.map((record, recordIndex) => (
                   <tr
                     key={recordIndex}
-                    className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+                    className="border-b border-separator last:border-b-0 hover:bg-[var(--row-hover)] transition-colors"
                   >
-                    <td className="px-4 py-4 font-medium text-slate-800">
+                    <td className="px-5 py-3.5 font-medium text-label">
                       {record[EXAM_COLUMNS.SUBJECT]}
                     </td>
-                    <td className="px-4 py-4 text-slate-600">
+                    <td className="px-5 py-3.5 text-label-2">
                       {record[EXAM_COLUMNS.TEACHER]}
                     </td>
-                    <td className="px-4 py-4 text-center">
-                      <span className="inline-block px-3 py-1 bg-primary-50 text-primary-700 text-sm rounded-full">
+                    <td className="px-5 py-3.5 text-center">
+                      <span className="text-label tabular-nums">
                         {record[EXAM_COLUMNS.YEAR]}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-center">
+                    <td className="px-5 py-3.5 text-center">
                       <span
-                        className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${getExamTypeBadgeClass(record[EXAM_COLUMNS.TYPE])}`}
+                        className={`badge ${getExamTypeBadgeClass(record[EXAM_COLUMNS.TYPE])}`}
                       >
                         {record[EXAM_COLUMNS.TYPE]}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-slate-500 text-sm">
+                    <td className="px-5 py-3.5 text-label-3 text-sm">
                       {record[EXAM_COLUMNS.NOTE] || "-"}
                     </td>
-                    <td className="px-4 py-4 text-center">
+                    <td className="px-5 py-3.5 text-center">
                       <a
                         href={record[EXAM_COLUMNS.FILE_URL]}
                         target="_blank"
                         rel="noreferrer"
                         aria-label="下載"
                         title="下載"
-                        className="inline-flex items-center justify-center w-9 h-9 bg-blue-500 hover:bg-blue-600 text-white rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                        className="pressable inline-flex items-center justify-center w-9 h-9 rounded-full bg-accent-tint text-accent-text hover:bg-accent hover:text-white"
                       >
-                        <FontAwesomeIcon icon={faDownload} />
+                        <FontAwesomeIcon icon={faDownload} className="text-sm" />
                       </a>
                     </td>
                   </tr>
@@ -331,8 +335,8 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
             </table>
           </div>
         ) : (
-          <div className="py-20 text-center text-slate-400">
-            <FontAwesomeIcon icon={faFolderOpen} className="text-5xl mb-4" />
+          <div className="py-24 text-center text-label-3">
+            <FontAwesomeIcon icon={faFolderOpen} className="text-5xl mb-4 opacity-60" />
             <p>沒有找到符合條件的考古題</p>
           </div>
         )}
@@ -340,7 +344,8 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
 
       {openFilterColumn !== null && (
         <div
-          className="fixed z-[200] inline-block align-top max-h-[250px] max-w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden bg-white rounded-lg shadow-xl border border-slate-100"
+          key={openFilterColumn}
+          className="fixed z-[200] inline-block align-top max-h-[280px] max-w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden material-popover rounded-xl p-1.5 origin-top-left animate-materialize"
           style={{
             top: filterMenuStyle.top,
             left: filterMenuStyle.left,
@@ -348,19 +353,23 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
           onMouseEnter={handleFilterMenuEnter}
           onMouseLeave={handleFilterMenuLeave}
         >
-          {availableFilterOptions[openFilterColumn].map((option, optionIndex) => (
-            <button
-              key={optionIndex}
-              type="button"
-              onClick={() => {
-                applyFilter(columns[openFilterColumn].key, option);
-                setOpenFilterColumn(null);
-              }}
-              className="block max-w-full text-left px-4 py-2 text-slate-700 text-sm whitespace-normal break-words hover:bg-slate-100 transition-colors"
-            >
-              {option}
-            </button>
-          ))}
+          {availableFilterOptions[openFilterColumn].map((option, optionIndex) => {
+            const isSelected =
+              activeFilters[columns[openFilterColumn].key] === option;
+            return (
+              <button
+                key={optionIndex}
+                type="button"
+                onClick={() => {
+                  applyFilter(columns[openFilterColumn].key, option);
+                  setOpenFilterColumn(null);
+                }}
+                className={`menu-item whitespace-normal break-words ${isSelected ? "font-semibold" : ""}`}
+              >
+                {option}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

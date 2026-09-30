@@ -54,41 +54,41 @@ const Login = ({ onLoginSuccess, onUserNameChange }) => {
   }, [googleAuthResponse, onLoginSuccess, onUserNameChange]);
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 md:p-8">
-      <div className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
-        {/* Left Side - Brand */}
-        <div className="bg-blue-800 p-8 md:p-12 flex flex-col items-center justify-center text-white md:w-1/2">
-          <div className="w-20 h-20 md:w-24 md:h-24 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center mb-6">
-            <FontAwesomeIcon
-              icon={faGraduationCap}
-              className="text-4xl md:text-5xl"
-            />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">NYCU EE</h1>
-          <p className="text-white/80 text-center">Previous Exam Archive</p>
+    <div className="relative min-h-screen bg-canvas flex items-center justify-center p-4 md:p-8 overflow-hidden">
+      {/* Soft ambient glow behind the sign-in card */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[48rem] h-[48rem] rounded-full opacity-40 blur-3xl bg-[radial-gradient(closest-side,rgba(41,151,255,0.35),transparent)]"
+      />
+
+      <div className="relative w-full max-w-md surface-card px-8 py-12 md:px-12 md:py-14 flex flex-col items-center text-center animate-fade-up">
+        {/* App icon */}
+        <div className="w-20 h-20 rounded-[22px] bg-gradient-to-b from-[#2997ff] to-[#0055d4] flex items-center justify-center text-white shadow-[0_8px_24px_rgba(0,113,227,0.35)] mb-8">
+          <FontAwesomeIcon icon={faGraduationCap} className="text-4xl" />
         </div>
 
-        {/* Right Side - Login Form */}
-        <div className="p-8 md:p-12 flex flex-col items-center justify-center md:w-1/2">
-          <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
-            Welcome
-          </h2>
-          <p className="text-slate-500 mb-8 text-center">
-            Sign in to access exam archives
-          </p>
+        <p className="text-sm font-semibold text-accent-text mb-1">NYCU EE</p>
+        <h1 className="text-title-1 text-label mb-2">Welcome</h1>
+        <p className="text-label-2 mb-10">
+          Previous Exam Archive
+          <br />
+          Sign in to access exam archives
+        </p>
 
-          <button
-            onClick={initiateGoogleLogin}
-            className="w-full max-w-xs flex items-center justify-center gap-3 px-6 py-3 border-2 border-slate-200 rounded-xl text-slate-700 font-medium hover:border-blue-800 hover:bg-blue-50 transition-all duration-200"
-          >
-            <FcGoogle className="text-2xl" />
-            Continue with Google
-          </button>
+        <button
+          type="button"
+          onClick={initiateGoogleLogin}
+          className="pressable w-full max-w-xs flex items-center justify-center gap-3 px-6 py-3.5 rounded-full bg-label text-canvas font-medium hover:opacity-90"
+        >
+          <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center">
+            <FcGoogle className="text-lg" />
+          </span>
+          Continue with Google
+        </button>
 
-          <p className="mt-6 text-sm text-slate-400 text-center">
-            Sign in with your Google account to continue
-          </p>
-        </div>
+        <p className="mt-6 text-footnote text-label-3">
+          Sign in with your Google account to continue
+        </p>
       </div>
     </div>
   );
