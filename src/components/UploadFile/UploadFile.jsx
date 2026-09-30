@@ -14,6 +14,7 @@ import {
   API_MESSAGES,
   EXAM_COLUMNS,
 } from "../../constants";
+import SelectField from "./SelectField.jsx";
 
 const MAX_SUGGESTIONS = 40;
 
@@ -36,6 +37,17 @@ function filterByPrefix(candidates, query) {
     .filter((name) => name.toLowerCase().startsWith(lower))
     .slice(0, MAX_SUGGESTIONS);
 }
+
+const GRADE_OPTIONS = [
+  { value: "大一", label: "大一" },
+  { value: "大二", label: "大二" },
+  { value: "大三以上選修", label: "大三以上" },
+  { value: "通識與其他", label: "通識與其他" },
+];
+
+const TYPE_OPTIONS = ["小考", "期中考", "期末考", "上機", "講義", "作業", "其他"].map(
+  (type) => ({ value: type, label: type }),
+);
 
 const INITIAL_FORM_STATE = {
   grade: "",
@@ -166,6 +178,10 @@ const UploadFile = () => {
     }));
   };
 
+  const handleSelectChange = (fieldName) => (value) => {
+    setFormData((prevData) => ({ ...prevData, [fieldName]: value }));
+  };
+
   useEffect(
     () => () => {
       clearSubjectBlurTimer();
@@ -241,22 +257,14 @@ const UploadFile = () => {
         <form onSubmit={handleFormSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Grade */}
-            <div>
-              <label className="field-label">
-                年級 <span className="text-destructive">*</span>
-              </label>
-              <select
-                className="field"
-                value={formData.grade}
-                onChange={handleFieldChange("grade")}
-              >
-                <option value="">請選擇年級</option>
-                <option value="大一">大一</option>
-                <option value="大二">大二</option>
-                <option value="大三以上選修">大三以上</option>
-                <option value="通識與其他">通識與其他</option>
-              </select>
-            </div>
+            <SelectField
+              id="upload-grade"
+              label="年級"
+              placeholder="請選擇年級"
+              options={GRADE_OPTIONS}
+              value={formData.grade}
+              onChange={handleSelectChange("grade")}
+            />
 
             {/* Subject — prefix suggestions from all exam records */}
             <div className="relative">
@@ -372,23 +380,14 @@ const UploadFile = () => {
 
             {/* Type */}
             <div className="md:col-span-2">
-              <label className="field-label">
-                類別 <span className="text-destructive">*</span>
-              </label>
-              <select
-                className="field"
+              <SelectField
+                id="upload-type"
+                label="類別"
+                placeholder="請選擇類別"
+                options={TYPE_OPTIONS}
                 value={formData.type}
-                onChange={handleFieldChange("type")}
-              >
-                <option value="">請選擇類別</option>
-                <option value="小考">小考</option>
-                <option value="期中考">期中考</option>
-                <option value="期末考">期末考</option>
-                <option value="上機">上機</option>
-                <option value="講義">講義</option>
-                <option value="作業">作業</option>
-                <option value="其他">其他</option>
-              </select>
+                onChange={handleSelectChange("type")}
+              />
             </div>
           </div>
 
