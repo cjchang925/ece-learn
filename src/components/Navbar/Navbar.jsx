@@ -5,11 +5,8 @@ import { VIEW_TYPES, GRADE_CATEGORIES } from "../../constants";
 
 const Navbar = ({
   onCategorySelect,
-  onLogin,
   onLogout,
   isLoggedIn,
-  isCheckingAuth,
-  isSigningIn,
   activeNavItemId,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,13 +23,10 @@ const Navbar = ({
     onCategorySelect(category);
   };
 
-  const handleAuthClick = () => {
+  const handleLogoutClick = () => {
     setIsMobileMenuOpen(false);
-    if (isLoggedIn) onLogout();
-    else onLogin();
+    onLogout();
   };
-
-  const authLabel = isLoggedIn ? "登出" : isSigningIn ? "登入中…" : "登入";
 
   const navItems = [
     { id: VIEW_TYPES.HOME, label: "首頁" },
@@ -113,21 +107,17 @@ const Navbar = ({
                   );
                 })}
               </div>
-              {/* Hidden (but space-holding) until we know the login state, so the nav does not shift */}
+              {/* Only for signed-in users; the slot is kept while hidden so the centred tabs never shift */}
               <button
                 type="button"
-                onClick={handleAuthClick}
-                disabled={isCheckingAuth || isSigningIn}
-                aria-hidden={isCheckingAuth || undefined}
-                className={`pressable min-w-[3.5rem] px-3 py-1.5 rounded-full text-[13px] font-medium disabled:cursor-default
-                  ${isCheckingAuth ? "invisible" : ""}
-                  ${
-                    isLoggedIn
-                      ? "text-destructive hover:bg-[var(--tint-red-bg)]"
-                      : "text-accent-text hover:bg-accent-tint"
-                  }`}
+                onClick={handleLogoutClick}
+                disabled={!isLoggedIn}
+                aria-hidden={!isLoggedIn || undefined}
+                className={`pressable min-w-[3.5rem] px-3 py-1.5 rounded-full text-[13px] font-medium text-destructive hover:bg-[var(--tint-red-bg)] ${
+                  isLoggedIn ? "" : "invisible"
+                }`}
               >
-                {authLabel}
+                登出
               </button>
             </div>
           </div>
@@ -177,18 +167,15 @@ const Navbar = ({
                 </button>
               );
             })}
-            {!isCheckingAuth && (
+            {isLoggedIn && (
               <>
                 <div className="h-px bg-separator mx-3 my-1.5" />
                 <button
                   type="button"
-                  onClick={handleAuthClick}
-                  disabled={isSigningIn}
-                  className={`pressable w-full text-left px-4 py-3 rounded-xl text-[15px] font-medium hover:bg-fill ${
-                    isLoggedIn ? "text-destructive" : "text-accent-text"
-                  }`}
+                  onClick={handleLogoutClick}
+                  className="pressable w-full text-left px-4 py-3 rounded-xl text-[15px] font-medium text-destructive hover:bg-fill"
                 >
-                  {authLabel}
+                  登出
                 </button>
               </>
             )}

@@ -9,11 +9,7 @@ import {
   faCheckCircle,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  API_ENDPOINTS,
-  API_MESSAGES,
-  EXAM_COLUMNS,
-} from "../../constants";
+import { API_ENDPOINTS, API_MESSAGES, EXAM_COLUMNS } from "../../constants";
 import SelectField from "../SelectField/SelectField.jsx";
 
 const MAX_SUGGESTIONS = 40;
@@ -45,9 +41,15 @@ const GRADE_OPTIONS = [
   { value: "通識與其他", label: "通識與其他" },
 ];
 
-const TYPE_OPTIONS = ["小考", "期中考", "期末考", "上機", "講義", "作業", "其他"].map(
-  (type) => ({ value: type, label: type }),
-);
+const TYPE_OPTIONS = [
+  "小考",
+  "期中考",
+  "期末考",
+  "上機",
+  "講義",
+  "作業",
+  "其他",
+].map((type) => ({ value: type, label: type }));
 
 const INITIAL_FORM_STATE = {
   grade: "",
@@ -57,7 +59,7 @@ const INITIAL_FORM_STATE = {
   type: "",
 };
 
-const UploadFile = () => {
+const UploadFile = ({ onSessionExpired }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
@@ -82,12 +84,7 @@ const UploadFile = () => {
           axios.get(API_ENDPOINTS.OTHER_EXAMS),
         ]);
         if (cancelled) return;
-        const allRows = [
-          ...one.data,
-          ...two.data,
-          ...adv.data,
-          ...other.data,
-        ];
+        const allRows = [...one.data, ...two.data, ...adv.data, ...other.data];
         setReferenceSubjects(
           collectUniqueColumnValues(allRows, EXAM_COLUMNS.SUBJECT),
         );
@@ -212,13 +209,20 @@ const UploadFile = () => {
       });
       const result = await response.json();
 
+      // No valid session (expired, or the server restarted): sign in again
+      if (response.status === 401) {
+        alert("登入已過期，請重新登入。");
+        onSessionExpired();
+        return;
+      }
+
       if (result.message === API_MESSAGES.INVALID_FILE) {
         alert("Invalid file type!");
       } else if (result.message === API_MESSAGES.SUCCESS) {
         alert("Upload successfully!");
         window.location.reload();
-      } else if (result.message === API_MESSAGES.INVALID_USER) {
-        alert("Invalid user! Maybe you are not using an NYCU account.");
+      } else {
+        alert("上傳失敗，請稍後再試。");
       }
     } catch (error) {
       console.error("Upload error:", error);
@@ -269,10 +273,7 @@ const UploadFile = () => {
 
             {/* Subject — prefix suggestions from all exam records */}
             <div className="relative">
-              <label
-                htmlFor="upload-subject"
-                className="field-label"
-              >
+              <label htmlFor="upload-subject" className="field-label">
                 科目全名 <span className="text-destructive">*</span>
               </label>
               <input
@@ -318,10 +319,7 @@ const UploadFile = () => {
 
             {/* Teacher — same prefix logic */}
             <div className="relative">
-              <label
-                htmlFor="upload-teacher"
-                className="field-label"
-              >
+              <label htmlFor="upload-teacher" className="field-label">
                 教師姓名 <span className="text-destructive">*</span>
               </label>
               <input
@@ -428,7 +426,9 @@ const UploadFile = () => {
             />
             {selectedFile ? (
               <>
-                <p className="text-accent-text font-semibold mb-2">檔案已選擇</p>
+                <p className="text-accent-text font-semibold mb-2">
+                  檔案已選擇
+                </p>
                 <p className="text-label-2 text-sm flex items-center justify-center gap-2 break-all">
                   <FontAwesomeIcon icon={faFile} />
                   {selectedFile.name}

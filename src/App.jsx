@@ -177,6 +177,11 @@ function App() {
   const activeNavItemId =
     currentView === VIEW_TYPES.EXAM_LIST ? selectedGradeCategory : currentView;
 
+  const handleSessionExpired = () => {
+    window.localStorage.removeItem(STORAGE_KEYS.LOGIN_STATE);
+    setIsLoggedIn(false);
+  };
+
   const handleLogout = () => {
     fetch(API_ENDPOINTS.LOGOUT, {
       method: "GET",
@@ -202,7 +207,7 @@ function App() {
     if (!isLoggedIn) {
       return <UploadSignInPrompt onSignIn={signIn} isSigningIn={isSigningIn} />;
     }
-    return <UploadFile />;
+    return <UploadFile onSessionExpired={handleSessionExpired} />;
   };
 
   const renderCurrentView = () => {
@@ -245,11 +250,9 @@ function App() {
       </Helmet>
       <Navbar
         onCategorySelect={handleCategorySelect}
-        onLogin={signIn}
         onLogout={handleLogout}
-        isLoggedIn={isLoggedIn}
-        isCheckingAuth={isCheckingAuth}
-        isSigningIn={isSigningIn}
+        // A stale localStorage value must not flash 登出 before the server confirms
+        isLoggedIn={isLoggedIn && !isCheckingAuth}
         activeNavItemId={activeNavItemId}
       />
       <main className="flex-1 flex flex-col">{renderCurrentView()}</main>

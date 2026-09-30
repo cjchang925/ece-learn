@@ -10,7 +10,7 @@ const GoogleSignInButton = ({ onClick, isSigningIn }) => (
     <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center">
       <FcGoogle className="text-lg" />
     </span>
-    {isSigningIn ? "登入中…" : "使用 Google 帳號登入"}
+    {isSigningIn ? "Logging in…" : "Login with @nycu.edu.tw"}
   </button>
 );
 

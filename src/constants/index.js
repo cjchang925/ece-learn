@@ -57,5 +57,4 @@ export const API_MESSAGES = {
   NO_RECORD: 'No record!',
   SUCCESS: 'Success!',
   INVALID_FILE: 'Invalid file!',
-  INVALID_USER: 'Invalid user!',
 };
