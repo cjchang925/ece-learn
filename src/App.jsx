@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Helmet } from "react-helmet";
 
 import Navbar from "./components/Navbar/Navbar.jsx";
 import ExamList from "./components/List/ExamList.jsx";
@@ -224,30 +223,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-canvas flex flex-col">
-      <Helmet>
-        <title>交大電機考古網站</title>
-        <meta
-          name="description"
-          content="交大電機專用考古網站，您考前的好幫手"
-        />
-        <meta
-          name="og:description"
-          content="交大電機專用考古網站，您考前的好幫手"
-        />
-        <meta property="og:site_name" content="Learn with NYCU EE" />
-        <meta property="og:locale" content="zh_tw" />
-        <meta property="og:url" content="prevexam.dece.nycu.edu.tw" />
-        <meta
-          property="og:image:secure_url"
-          content="https://storage.googleapis.com/ece-files/og.jpeg"
-        />
-        <meta property="og:image:type" content="image/jpeg" />
-        <script
-          src="https://accounts.google.com/gsi/client"
-          async
-          defer
-        ></script>
-      </Helmet>
       <Navbar
         onCategorySelect={handleCategorySelect}
         onLogout={handleLogout}
