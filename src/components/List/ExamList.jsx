@@ -116,7 +116,15 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
     if (!th) return null;
     const thRect = th.getBoundingClientRect();
     const labelRect = labelEl?.getBoundingClientRect();
-    // Every column, centered or not: option text starts where the label's first character does
+    if (columns[columnIndex].key === "year") {
+      // 學年度: short, uniform options read best centered under the column
+      return {
+        top: thRect.bottom,
+        left: thRect.left + thRect.width / 2,
+        centered: true,
+      };
+    }
+    // Other columns: option text starts where the label's first character does
     const anchorLeft = labelRect?.left ?? thRect.left;
     return {
       top: thRect.bottom,
@@ -458,10 +466,12 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
       {openFilterColumn !== null && (
         <div
           key={openFilterColumn}
-          className="fixed z-[200] inline-block align-top max-h-[280px] max-w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden material-popover rounded-xl p-1.5 origin-top-left animate-materialize"
+          className={`fixed z-[200] inline-block align-top max-h-[280px] max-w-[min(22rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden material-popover rounded-xl p-1.5 animate-materialize ${filterMenuStyle.centered ? "origin-top" : "origin-top-left"}`}
           style={{
             top: filterMenuStyle.top,
             left: filterMenuStyle.left,
+            // `translate`, not `transform`, so the open animation's scale doesn't cancel it
+            translate: filterMenuStyle.centered ? "-50% 0" : undefined,
           }}
           onMouseEnter={handleFilterMenuEnter}
           onMouseLeave={handleFilterMenuLeave}
