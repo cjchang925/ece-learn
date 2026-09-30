@@ -245,7 +245,7 @@ const UploadFile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-canvas px-4 pt-10 pb-16 md:pt-14">
+    <div className="flex-1 bg-canvas px-4 pt-10 pb-16 md:pt-14">
       {/* Header */}
       <div className="max-w-2xl mx-auto text-center mb-10 animate-fade-up">
         <h1 className="text-title-1 text-label mb-3">上傳考古題</h1>

@@ -94,7 +94,7 @@ const HomePage = ({ examDataByCategory }) => {
 
       {/* Main Content */}
       <section className="px-4 pb-16 md:pb-24 flex-1">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-5 md:gap-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-5 md:gap-6">
           {infoCards.map((card) => (
             <article
               key={card.title}

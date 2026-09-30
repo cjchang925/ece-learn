@@ -24,7 +24,6 @@ const Navbar = ({ onCategorySelect, onLogout, userName, activeNavItemId }) => {
     { id: GRADE_CATEGORIES.SECOND_YEAR, label: "大二" },
     { id: GRADE_CATEGORIES.ADVANCED, label: "大三以上" },
     { id: GRADE_CATEGORIES.OTHER, label: "通識與其他" },
-    { id: VIEW_TYPES.WISH_LIST, label: "願望清單" },
     { id: VIEW_TYPES.UPLOAD, label: "上傳考古" },
   ];
 
@@ -47,7 +46,7 @@ const Navbar = ({ onCategorySelect, onLogout, userName, activeNavItemId }) => {
 
   return (
     <nav className="sticky top-0 z-50 material-chrome border-b border-separator">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-[74rem] mx-auto px-4">
         {/* 1fr | auto | 1fr keeps the nav cluster truly centered regardless of brand / greeting width */}
         <div className="grid grid-cols-[1fr_auto_1fr] items-center h-14 gap-4">
           {/* Brand + greeting (left column) */}

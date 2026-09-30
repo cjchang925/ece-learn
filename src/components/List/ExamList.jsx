@@ -228,7 +228,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-canvas px-4 pt-10 pb-16 md:pt-14">
+    <div className="flex-1 bg-canvas px-4 pt-10 pb-16 md:pt-14">
       {/* Header */}
       <div className="max-w-6xl mx-auto mb-6 flex flex-wrap items-end gap-x-4 gap-y-2">
         <h1 className="text-title-1 text-label">考古題列表</h1>
@@ -299,17 +299,17 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                     <td className="px-5 py-3.5 font-medium text-label">
                       {record[EXAM_COLUMNS.SUBJECT]}
                     </td>
-                    <td className="px-5 py-3.5 text-label-2">
+                    <td className="px-5 py-3.5 text-label-2 whitespace-nowrap">
                       {record[EXAM_COLUMNS.TEACHER]}
                     </td>
-                    <td className="px-5 py-3.5 text-center">
+                    <td className="px-5 py-3.5 text-center whitespace-nowrap">
                       <span className="text-label tabular-nums">
                         {record[EXAM_COLUMNS.YEAR]}
                       </span>
                     </td>
                     <td className="px-5 py-3.5 text-center">
                       <span
-                        className={`badge ${getExamTypeBadgeClass(record[EXAM_COLUMNS.TYPE])}`}
+                        className={`badge whitespace-nowrap ${getExamTypeBadgeClass(record[EXAM_COLUMNS.TYPE])}`}
                       >
                         {record[EXAM_COLUMNS.TYPE]}
                       </span>

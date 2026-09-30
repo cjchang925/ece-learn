@@ -4,7 +4,6 @@ import { Helmet } from "react-helmet";
 
 import Navbar from "./components/Navbar/Navbar.jsx";
 import ExamList from "./components/List/ExamList.jsx";
-import WishCardList from "./components/card/WishCardList.jsx";
 import UploadFile from "./components/UploadFile/UploadFile.jsx";
 import HomePage from "./components/HomePage/HomePage.jsx";
 import Login from "./components/Login/Login.jsx";
@@ -38,7 +37,9 @@ function App() {
   const [currentView, setCurrentView] = useState(() => {
     try {
       const raw = window.sessionStorage.getItem(STORAGE_KEYS.CURRENT_VIEW);
-      return raw ? JSON.parse(raw) : VIEW_TYPES.HOME;
+      const view = raw ? JSON.parse(raw) : VIEW_TYPES.HOME;
+      // Views saved by older versions (e.g. the removed wish list) fall back to home
+      return Object.values(VIEW_TYPES).includes(view) ? view : VIEW_TYPES.HOME;
     } catch {
       return VIEW_TYPES.HOME;
     }
@@ -131,7 +132,6 @@ function App() {
 
     const nonExamViews = [
       VIEW_TYPES.HOME,
-      VIEW_TYPES.WISH_LIST,
       VIEW_TYPES.UPLOAD,
     ];
 
@@ -199,8 +199,6 @@ function App() {
     switch (currentView) {
       case VIEW_TYPES.HOME:
         return <HomePage examDataByCategory={examDataByCategory} />;
-      case VIEW_TYPES.WISH_LIST:
-        return <WishCardList />;
       case VIEW_TYPES.UPLOAD:
         return <UploadFile />;
       case VIEW_TYPES.EXAM_LIST:

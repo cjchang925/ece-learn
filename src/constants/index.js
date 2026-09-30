@@ -28,7 +28,6 @@ export const STORAGE_KEYS = {
 // View Types for Navigation
 export const VIEW_TYPES = {
   HOME: 'readme',
-  WISH_LIST: 'hope',
   UPLOAD: 'uploadfile',
   EXAM_LIST: 'list',
 };
@@ -55,7 +54,6 @@ export const EXAM_COLUMNS = {
 // External URLs
 export const EXTERNAL_URLS = {
   WISH_FORM: 'https://docs.google.com/forms/d/e/1FAIpQLSfn5uEo1MefhezayHOvvfWoIlAKJ7XvnKiUSaXXdDE0cLPAag/viewform?usp=pp_url',
-  WISH_SPREADSHEET: 'https://docs.google.com/spreadsheets/d/1cW-HJEbYDWIsagjmoWyrzjjRlMnBQ3feQfbsKcPi9ZU/gviz/tq?tqx=out:json&tq&gid=0',
 };
 
 // API Response Messages
