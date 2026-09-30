@@ -46,7 +46,7 @@ export const EXAM_COLUMNS = {
   TEACHER: 1,
   YEAR: 2,
   TYPE: 3,
-  NOTE: 4,
+  FILE_EXTENSION: 4,
   FILENAME: 5,
   FILE_URL: 6,
 };

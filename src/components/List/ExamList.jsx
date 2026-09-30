@@ -349,10 +349,10 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                       );
                     })}
                     <th className="w-[22%] px-5 py-4 text-left text-label-2 text-[13px] font-semibold">
-                      備註
+                      副檔名
                     </th>
                     <th className="w-[20%] px-5 py-4 text-center text-label-2 text-[13px] font-semibold">
-                      檔案
+                      下載
                     </th>
                   </tr>
                 </thead>
@@ -381,7 +381,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                         </span>
                       </td>
                       <td className="px-5 py-3.5 text-label-3 text-sm">
-                        {record[EXAM_COLUMNS.NOTE] || "-"}
+                        {record[EXAM_COLUMNS.FILE_EXTENSION] || "-"}
                       </td>
                       <td className="px-5 py-3.5 text-center">
                         {renderDownloadLink(record)}
@@ -419,9 +419,9 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                         {record[EXAM_COLUMNS.TYPE]}
                       </span>
                     </div>
-                    {record[EXAM_COLUMNS.NOTE] && (
+                    {record[EXAM_COLUMNS.FILE_EXTENSION] && (
                       <p className="mt-1 text-sm text-label-3">
-                        {record[EXAM_COLUMNS.NOTE]}
+                        副檔名：{record[EXAM_COLUMNS.FILE_EXTENSION]}
                       </p>
                     )}
                   </div>
