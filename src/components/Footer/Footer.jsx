@@ -11,22 +11,22 @@ const Footer = () => {
             EE
           </div>
           <span className="font-semibold text-label text-base">
-            交大電機考古網站
+            NYCU EE Previous Exams
           </span>
         </div>
 
         {/* Team — label and links on one row */}
         <div className="mb-4 pb-4 border-b border-separator">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <h4 className="font-semibold text-label shrink-0">開發團隊</h4>
+            <h4 className="font-semibold text-label shrink-0">Developers</h4>
             <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 min-w-0">
               {[
-                { name: "Justin", url: "https://github.com/Justin900429" },
-                { name: "Joyce", url: "https://github.com/JoyceFang1213" },
                 {
                   name: "Chi-Chun Chang",
                   url: "https://github.com/cjchang925",
                 },
+                { name: "Justin", url: "https://github.com/Justin900429" },
+                { name: "Joyce", url: "https://github.com/JoyceFang1213" },
               ].map((dev) => (
                 <li key={dev.name}>
                   <a

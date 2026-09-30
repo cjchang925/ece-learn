@@ -11,7 +11,6 @@ const STATS = [
 const HomePage = () => {
   const instructions = [
     "考古資源是學長姐慢慢累積出來的，請不要惡意使用。",
-    "如果要用 Filter，請先選科目再選其他。",
     "上傳考古題前請確認老師意願，若有侵權問題請自行負責。",
   ];
 
