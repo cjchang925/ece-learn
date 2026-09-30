@@ -4,6 +4,7 @@ import React, {
   useRef,
   useLayoutEffect,
   useCallback,
+  useMemo,
 } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,22 +15,44 @@ import {
 import { EXAM_COLUMNS } from "../../constants";
 import SelectField from "../SelectField/SelectField.jsx";
 
-/** Filter menu options, keyed by filterable column */
-function getAvailableFilterOptions(examRecords) {
+/** Record column behind each filter */
+const FILTER_COLUMNS = {
+  subject: EXAM_COLUMNS.SUBJECT,
+  teacher: EXAM_COLUMNS.TEACHER,
+  type: EXAM_COLUMNS.TYPE,
+};
+
+const NO_FILTERS = { subject: "", teacher: "", type: "" };
+
+/** Records matching every active filter */
+function filterRecords(examRecords, filters) {
+  return examRecords.filter((record) =>
+    Object.entries(FILTER_COLUMNS).every(
+      ([key, column]) => !filters[key] || record[column] === filters[key],
+    ),
+  );
+}
+
+function getDistinctValues(examRecords, column) {
+  return [...new Set(examRecords.map((record) => record[column]))].sort();
+}
+
+/**
+ * Filter menu options, keyed by filterable column, narrowing 科目 → 教師 → 類別:
+ * each menu only lists values that exist under the filters before it, so no
+ * choice can leave the list empty.
+ */
+function getAvailableFilterOptions(examRecords, filters) {
   return {
-    subject: [
-      ...new Set(
-        examRecords.map((record) => record[EXAM_COLUMNS.SUBJECT]).sort(),
-      ),
-    ],
-    teacher: [
-      ...new Set(
-        examRecords.map((record) => record[EXAM_COLUMNS.TEACHER]).sort(),
-      ),
-    ],
-    type: [
-      ...new Set(examRecords.map((record) => record[EXAM_COLUMNS.TYPE]).sort()),
-    ],
+    subject: getDistinctValues(examRecords, EXAM_COLUMNS.SUBJECT),
+    teacher: getDistinctValues(
+      filterRecords(examRecords, { ...NO_FILTERS, subject: filters.subject }),
+      EXAM_COLUMNS.TEACHER,
+    ),
+    type: getDistinctValues(
+      filterRecords(examRecords, { ...filters, type: "" }),
+      EXAM_COLUMNS.TYPE,
+    ),
   };
 }
 
@@ -100,15 +123,15 @@ const columns = [
 ];
 
 const ExamList = ({ examRecords: initialExamRecords }) => {
-  const [filteredRecords, setFilteredRecords] = useState(initialExamRecords);
-  const [availableFilterOptions, setAvailableFilterOptions] = useState(
-    getAvailableFilterOptions(initialExamRecords),
+  const [activeFilters, setActiveFilters] = useState(NO_FILTERS);
+  const filteredRecords = useMemo(
+    () => filterRecords(initialExamRecords, activeFilters),
+    [initialExamRecords, activeFilters],
   );
-  const [activeFilters, setActiveFilters] = useState({
-    subject: "",
-    teacher: "",
-    type: "",
-  });
+  const availableFilterOptions = useMemo(
+    () => getAvailableFilterOptions(initialExamRecords, activeFilters),
+    [initialExamRecords, activeFilters],
+  );
   /** 0–3 = filter column index; fixed-position menu escapes overflow clipping */
   const [openFilterColumn, setOpenFilterColumn] = useState(null);
   const [filterMenuStyle, setFilterMenuStyle] = useState({ top: 0, left: 0 });
@@ -187,9 +210,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   };
 
   useEffect(() => {
-    setFilteredRecords(initialExamRecords);
-    setAvailableFilterOptions(getAvailableFilterOptions(initialExamRecords));
-    setActiveFilters({ subject: "", teacher: "", type: "" });
+    setActiveFilters(NO_FILTERS);
     setOpenFilterColumn(null);
   }, [initialExamRecords]);
 
@@ -201,54 +222,21 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   );
 
   const applyFilter = (filterCategory, filterValue) => {
-    let filtered;
-
-    if (filterCategory === "subject") {
-      filtered = initialExamRecords.filter(
-        (record) => record[EXAM_COLUMNS.SUBJECT] === filterValue,
-      );
-      const newOptions = getAvailableFilterOptions(filtered);
-      newOptions.subject = [
-        ...new Set(
-          initialExamRecords
-            .map((record) => record[EXAM_COLUMNS.SUBJECT])
-            .sort(),
-        ),
-      ];
-      setAvailableFilterOptions(newOptions);
-      setActiveFilters({
-        subject: filterValue,
-        teacher: "",
-        type: "",
-      });
-    } else if (filterCategory === "teacher") {
-      filtered = initialExamRecords.filter((record) => {
-        if (
-          activeFilters.subject &&
-          record[EXAM_COLUMNS.SUBJECT] !== activeFilters.subject
-        )
-          return false;
-        return record[EXAM_COLUMNS.TEACHER] === filterValue;
-      });
-      setActiveFilters((prev) => ({ ...prev, teacher: filterValue }));
-    } else if (filterCategory === "type") {
-      filtered = initialExamRecords.filter((record) => {
-        if (
-          activeFilters.subject &&
-          record[EXAM_COLUMNS.SUBJECT] !== activeFilters.subject
-        )
-          return false;
-        if (
-          activeFilters.teacher &&
-          record[EXAM_COLUMNS.TEACHER] !== activeFilters.teacher
-        )
-          return false;
-        return record[EXAM_COLUMNS.TYPE] === filterValue;
-      });
-      setActiveFilters((prev) => ({ ...prev, type: filterValue }));
-    }
-
-    setFilteredRecords(filtered);
+    setActiveFilters((prev) => {
+      if (filterCategory === "subject") {
+        return { ...NO_FILTERS, subject: filterValue };
+      }
+      const next = { ...prev, [filterCategory]: filterValue };
+      // A new teacher may not have the chosen 類別; drop it rather than show nothing
+      if (
+        filterCategory === "teacher" &&
+        next.type &&
+        filterRecords(initialExamRecords, next).length === 0
+      ) {
+        next.type = "";
+      }
+      return next;
+    });
   };
 
   // A button (not a link) so hovering does not show the file URL in the
