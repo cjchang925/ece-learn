@@ -247,10 +247,10 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   };
 
   const columns = [
-    { key: "subject", label: "科目", width: "w-[22%]", align: "text-left" },
-    { key: "teacher", label: "教師", width: "w-[14%]", align: "text-left" },
-    { key: "year", label: "年份", width: "w-[10%]", align: "text-center" },
-    { key: "type", label: "類別", width: "w-[12%]", align: "text-center" },
+    { key: "subject", label: "科目", width: "w-[34%]", align: "text-left" },
+    { key: "teacher", label: "教師", width: "w-[18%]", align: "text-left" },
+    { key: "year", label: "年份", width: "w-[13%]", align: "text-center" },
+    { key: "type", label: "類別", width: "w-[13%]", align: "text-center" },
   ];
 
   const renderDownloadLink = (record) => (
@@ -348,10 +348,10 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                         </th>
                       );
                     })}
-                    <th className="w-[22%] px-5 py-4 text-left text-label-2 text-[13px] font-semibold">
+                    <th className="w-[11%] px-5 py-4 text-center text-label-2 text-[13px] font-semibold">
                       副檔名
                     </th>
-                    <th className="w-[20%] px-5 py-4 text-center text-label-2 text-[13px] font-semibold">
+                    <th className="w-[11%] px-5 py-4 text-center text-label-2 text-[13px] font-semibold">
                       下載
                     </th>
                   </tr>
@@ -380,7 +380,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                           {record[EXAM_COLUMNS.TYPE]}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-label-3 text-sm">
+                      <td className="px-5 py-3.5 text-center text-label-3 text-sm">
                         {record[EXAM_COLUMNS.FILE_EXTENSION] || "-"}
                       </td>
                       <td className="px-5 py-3.5 text-center">
