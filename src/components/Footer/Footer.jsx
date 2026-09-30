@@ -3,14 +3,14 @@ import { FaGithub } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-surface-2 border-t border-separator text-footnote text-label-2">
+    <footer className="bg-surface-2 border-t border-separator text-[15px] leading-relaxed text-label-2">
       <div className="max-w-[74rem] mx-auto px-4 py-8">
         {/* Brand */}
         <div className="flex items-center gap-2.5 mb-4">
-          <div className="w-7 h-7 bg-gradient-to-b from-[#2997ff] to-[#0066cc] rounded-[8px] flex items-center justify-center text-white text-[11px] font-semibold shrink-0">
+          <div className="w-8 h-8 bg-gradient-to-b from-[#2997ff] to-[#0066cc] rounded-[9px] flex items-center justify-center text-white text-xs font-semibold shrink-0">
             EE
           </div>
-          <span className="font-semibold text-label text-sm">
+          <span className="font-semibold text-label text-base">
             交大電機考古網站
           </span>
         </div>
@@ -35,7 +35,7 @@ const Footer = () => {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-label-2 hover:text-accent-text hover:underline transition-colors"
                   >
-                    <FaGithub className="text-xs shrink-0" /> {dev.name}
+                    <FaGithub className="text-sm shrink-0" /> {dev.name}
                   </a>
                 </li>
               ))}

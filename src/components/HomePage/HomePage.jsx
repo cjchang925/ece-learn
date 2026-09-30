@@ -1,40 +1,15 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { FaBook } from "react-icons/fa";
 import Footer from "../Footer/Footer.jsx";
-import { EXAM_COLUMNS } from "../../constants";
 
-const HomePage = ({ examDataByCategory }) => {
-  // Calculate statistics from exam data
-  const statistics = useMemo(() => {
-    const allExams = Object.values(examDataByCategory).flat();
-    const totalExams = allExams.length;
+// Hardcoded so the page does not have to count the exam records on every visit
+const STATS = [
+  { value: "2,200+", label: "考古題" },
+  { value: "190+", label: "課程" },
+  { value: "40,000+", label: "使用者" },
+];
 
-    // Get unique courses (subject + teacher combination)
-    const uniqueCourses = new Set(
-      allExams.map(
-        (exam) => `${exam[EXAM_COLUMNS.SUBJECT]}_${exam[EXAM_COLUMNS.TEACHER]}`,
-      ),
-    );
-    const totalCourses = uniqueCourses.size;
-
-    // Round to nearest hundred for exams
-    const roundedExams = Math.round(totalExams / 100) * 100;
-
-    // Round to nearest ten for courses
-    const roundedCourses = Math.round(totalCourses / 10) * 10;
-
-    return {
-      exams: roundedExams > 0 ? `${roundedExams}+` : "0",
-      courses: roundedCourses > 0 ? `${roundedCourses}+` : "0",
-    };
-  }, [examDataByCategory]);
-
-  const stats = [
-    { value: statistics.exams, label: "考古題" },
-    { value: statistics.courses, label: "課程" },
-    { value: "7000+", label: "使用者" },
-  ];
-
+const HomePage = () => {
   const instructions = [
     "考古資源是學長姐慢慢累積出來的，請不要惡意使用。",
     "如果要用 Filter，請先選科目再選其他。",
@@ -63,10 +38,10 @@ const HomePage = ({ examDataByCategory }) => {
             集結學長姐的智慧結晶，助你在考試中脫穎而出
           </p>
 
-          <dl className="grid grid-cols-3 max-w-xl mx-auto divide-x divide-separator">
-            {stats.map((stat) => (
+          <dl className="grid grid-cols-3 max-w-3xl mx-auto divide-x divide-separator">
+            {STATS.map((stat) => (
               <div key={stat.label} className="px-2">
-                <dd className="text-3xl md:text-5xl font-bold tracking-[-0.03em] text-label tabular-nums">
+                <dd className="text-[clamp(1rem,5.2vw,3rem)] leading-tight font-bold tracking-[-0.03em] text-label tabular-nums whitespace-nowrap">
                   {stat.value}
                 </dd>
                 <dt className="mt-1 text-sm text-label-2">{stat.label}</dt>

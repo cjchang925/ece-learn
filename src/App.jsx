@@ -198,7 +198,7 @@ function App() {
   const renderCurrentView = () => {
     switch (currentView) {
       case VIEW_TYPES.HOME:
-        return <HomePage examDataByCategory={examDataByCategory} />;
+        return <HomePage />;
       case VIEW_TYPES.UPLOAD:
         return <UploadFile />;
       case VIEW_TYPES.EXAM_LIST:
