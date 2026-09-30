@@ -56,27 +56,9 @@ const Footer = () => {
             Privacy Policy
           </h4>
           <p>
-            When you sign in with Google to upload, we use your name, email
-            and profile picture only to verify NYCU membership, and never sell
-            or share them. You can revoke access in your{" "}
-            <a
-              href="https://myaccount.google.com/permissions"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent-text hover:underline"
-            >
-              Google Account
-            </a>{" "}
-            or ask us on{" "}
-            <a
-              href="https://github.com/cjchang925/ece-learn/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent-text hover:underline"
-            >
-              GitHub
-            </a>{" "}
-            to delete your data.
+            When you sign in with Google, we collect your name and email
+            only to verify your NYCU membership. Your information is never
+            sold or shared with third parties.
           </p>
         </section>
 
