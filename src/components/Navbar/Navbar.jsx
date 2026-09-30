@@ -57,10 +57,10 @@ const Navbar = ({
   return (
     <nav className="sticky top-0 z-50 material-chrome border-b border-separator">
       <div className="max-w-[74rem] mx-auto px-4">
-        {/* 1fr | auto | 1fr keeps the nav cluster truly centered regardless of brand / greeting width */}
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-14 gap-4">
-          {/* Brand + greeting (left column) */}
-          <div className="flex items-center gap-2.5 min-w-0 justify-self-start">
+        {/* 1fr | auto | 1fr keeps the tabs truly centred; on desktop the side items sit next to them with equal gaps */}
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-14 gap-4 lg:gap-8">
+          {/* Brand (left column) */}
+          <div className="flex items-center gap-2.5 min-w-0 justify-self-start lg:justify-self-end">
             <div className="w-8 h-8 bg-gradient-to-b from-[#2997ff] to-[#0066cc] rounded-[9px] flex items-center justify-center text-white text-xs font-semibold tracking-tight shrink-0 shadow-sm">
               EE
             </div>
@@ -111,12 +111,12 @@ const Navbar = ({
           </div>
 
           {/* Right column (mirrors the left one, so the tabs stay truly centred): 登出 on desktop, menu button on mobile */}
-          <div className="flex justify-end items-center justify-self-end min-w-0">
+          <div className="flex justify-end items-center justify-self-end lg:justify-self-start min-w-0">
             {isLoggedIn && (
               <button
                 type="button"
                 onClick={handleLogoutClick}
-                className="pressable hidden lg:inline-flex px-3 py-1.5 rounded-full text-[13px] font-medium text-destructive hover:bg-[var(--tint-red-bg)]"
+                className="pressable hidden lg:inline-flex -ml-3 px-3 py-1.5 rounded-full text-[13px] font-medium text-destructive hover:bg-[var(--tint-red-bg)]"
               >
                 登出
               </button>
