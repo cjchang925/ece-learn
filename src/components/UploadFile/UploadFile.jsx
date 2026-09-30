@@ -14,7 +14,7 @@ import {
   API_MESSAGES,
   EXAM_COLUMNS,
 } from "../../constants";
-import SelectField from "./SelectField.jsx";
+import SelectField from "../SelectField/SelectField.jsx";
 
 const MAX_SUGGESTIONS = 40;
 
@@ -261,6 +261,7 @@ const UploadFile = () => {
               id="upload-grade"
               label="年級"
               placeholder="請選擇年級"
+              required
               options={GRADE_OPTIONS}
               value={formData.grade}
               onChange={handleSelectChange("grade")}
@@ -384,6 +385,7 @@ const UploadFile = () => {
                 id="upload-type"
                 label="類別"
                 placeholder="請選擇類別"
+                required
                 options={TYPE_OPTIONS}
                 value={formData.type}
                 onChange={handleSelectChange("type")}

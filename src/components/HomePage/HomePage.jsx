@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { FaBook, FaHeart } from "react-icons/fa";
+import { FaBook } from "react-icons/fa";
 import Footer from "../Footer/Footer.jsx";
-import { EXTERNAL_URLS, EXAM_COLUMNS } from "../../constants";
+import { EXAM_COLUMNS } from "../../constants";
 
 const HomePage = ({ examDataByCategory }) => {
   // Calculate statistics from exam data
@@ -35,28 +35,10 @@ const HomePage = ({ examDataByCategory }) => {
     { value: "7000+", label: "使用者" },
   ];
 
-  const infoCards = [
-    {
-      title: "使用說明",
-      icon: <FaBook />,
-      iconClass: "from-[#2997ff] to-[#0066cc]",
-      items: [
-        "考古資源是學長姐慢慢累積出來的，請不要惡意使用。",
-        "如果要用 Filter，請先選科目再選其他。",
-        "上傳考古題前請確認老師意願，若有侵權問題請自行負責。",
-      ],
-    },
-    {
-      title: "願望清單",
-      icon: <FaHeart />,
-      iconClass: "from-[#ff9f0a] to-[#ff6b00]",
-      action: { label: "填寫表單", href: EXTERNAL_URLS.WISH_FORM },
-      items: [
-        "可以填想要的功能或考古，但是不一定能實現。",
-        "課本的題目與解答恕不提供，有版權疑慮。",
-        "不合理的要求或是已經完成的事項會被移除。",
-      ],
-    },
+  const instructions = [
+    "考古資源是學長姐慢慢累積出來的，請不要惡意使用。",
+    "如果要用 Filter，請先選科目再選其他。",
+    "上傳考古題前請確認老師意願，若有侵權問題請自行負責。",
   ];
 
   return (
@@ -68,7 +50,9 @@ const HomePage = ({ examDataByCategory }) => {
           className="pointer-events-none absolute -top-48 left-1/2 -translate-x-1/2 w-[56rem] h-[40rem] rounded-full opacity-50 blur-3xl bg-[radial-gradient(closest-side,rgba(41,151,255,0.25),transparent)]"
         />
         <div className="relative max-w-4xl mx-auto animate-fade-up">
-          <p className="text-accent-text font-semibold mb-4">NYCU EE · Previous Exams</p>
+          <p className="text-accent-text font-semibold mb-4">
+            NYCU EE · Previous Exams
+          </p>
           <h1 className="text-large-title text-label mb-5">
             交大電機
             <span className="bg-gradient-to-r from-[#2997ff] via-[#7a5cff] to-[#ff6b9d] bg-clip-text text-transparent">
@@ -94,50 +78,29 @@ const HomePage = ({ examDataByCategory }) => {
 
       {/* Main Content */}
       <section className="px-4 pb-16 md:pb-24 flex-1">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-5 md:gap-6">
-          {infoCards.map((card) => (
-            <article
-              key={card.title}
-              className="surface-card overflow-hidden animate-fade-up"
-            >
-              <header className="px-6 pt-6 pb-4 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <div
-                    className={`w-11 h-11 bg-gradient-to-b ${card.iconClass} rounded-xl flex items-center justify-center text-white text-lg shadow-sm`}
-                  >
-                    {card.icon}
-                  </div>
-                  <h2 className="text-title-2 text-label">{card.title}</h2>
-                </div>
-                {card.action && (
-                  <a
-                    href={card.action.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn-tinted text-sm"
-                  >
-                    {card.action.label}
-                  </a>
-                )}
-              </header>
-              <ol className="px-6 pb-3">
-                {card.items.map((text, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-3.5 py-3.5 border-t border-separator first:border-t-0"
-                  >
-                    <span className="w-6 h-6 rounded-full bg-fill text-label-2 text-xs font-semibold flex items-center justify-center flex-shrink-0 mt-px tabular-nums">
-                      {index + 1}
-                    </span>
-                    <span className="text-label leading-relaxed text-[15px]">
-                      {text}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </article>
-          ))}
-        </div>
+        <article className="max-w-3xl mx-auto surface-card overflow-hidden animate-fade-up">
+          <header className="px-6 pt-6 pb-4 flex items-center gap-3.5">
+            <div className="w-11 h-11 bg-gradient-to-b from-[#2997ff] to-[#0066cc] rounded-xl flex items-center justify-center text-white text-lg shadow-sm">
+              <FaBook />
+            </div>
+            <h2 className="text-title-2 text-label">使用說明</h2>
+          </header>
+          <ol className="px-6 pb-3">
+            {instructions.map((text, index) => (
+              <li
+                key={index}
+                className="flex items-start gap-3.5 py-3.5 border-t border-separator first:border-t-0"
+              >
+                <span className="w-6 h-6 rounded-full bg-fill text-label-2 text-xs font-semibold flex items-center justify-center flex-shrink-0 mt-px tabular-nums">
+                  {index + 1}
+                </span>
+                <span className="text-label leading-relaxed text-[15px]">
+                  {text}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </article>
       </section>
 
       <Footer />

@@ -7,7 +7,15 @@ import { faCheck, faChevronDown } from "@fortawesome/free-solid-svg-icons";
  * suggestions and the exam list filters) instead of the native OS menu.
  * Implements the ARIA "select-only combobox" pattern.
  */
-const SelectField = ({ id, label, value, onChange, options, placeholder }) => {
+const SelectField = ({
+  id,
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+  required = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const rootRef = useRef(null);
@@ -45,7 +53,9 @@ const SelectField = ({ id, label, value, onChange, options, placeholder }) => {
   // Keep the keyboard-highlighted option visible
   useEffect(() => {
     if (!isOpen || activeIndex < 0) return;
-    listRef.current?.children[activeIndex]?.scrollIntoView({ block: "nearest" });
+    listRef.current?.children[activeIndex]?.scrollIntoView({
+      block: "nearest",
+    });
   }, [isOpen, activeIndex]);
 
   const handleKeyDown = (event) => {
@@ -90,7 +100,8 @@ const SelectField = ({ id, label, value, onChange, options, placeholder }) => {
   return (
     <div ref={rootRef} className="relative">
       <label id={`${id}-label`} htmlFor={id} className="field-label">
-        {label} <span className="text-destructive">*</span>
+        {label}
+        {required && <span className="text-destructive"> *</span>}
       </label>
       <button
         id={id}
@@ -106,7 +117,9 @@ const SelectField = ({ id, label, value, onChange, options, placeholder }) => {
         onClick={() => (isOpen ? close() : open())}
         onKeyDown={handleKeyDown}
         className={`field flex items-center justify-between gap-3 text-left ${
-          isOpen ? "bg-surface border-accent shadow-[0_0_0_4px_var(--accent-tint)]" : ""
+          isOpen
+            ? "bg-surface border-accent shadow-[0_0_0_4px_var(--accent-tint)]"
+            : ""
         }`}
       >
         <span className={`truncate ${selectedOption ? "" : "text-label-3"}`}>

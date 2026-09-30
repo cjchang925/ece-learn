@@ -51,11 +51,6 @@ export const EXAM_COLUMNS = {
   FILE_URL: 6,
 };
 
-// External URLs
-export const EXTERNAL_URLS = {
-  WISH_FORM: 'https://docs.google.com/forms/d/e/1FAIpQLSfn5uEo1MefhezayHOvvfWoIlAKJ7XvnKiUSaXXdDE0cLPAag/viewform?usp=pp_url',
-};
-
 // API Response Messages
 export const API_MESSAGES = {
   HAS_RECORD: 'Has record!',
