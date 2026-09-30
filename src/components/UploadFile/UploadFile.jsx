@@ -156,7 +156,7 @@ const UploadFile = ({ onSessionExpired }) => {
       formData.grade &&
       formData.subject &&
       formData.teacher &&
-      formData.year &&
+      /^\d+$/.test(formData.year.trim()) &&
       formData.type
     );
   };
