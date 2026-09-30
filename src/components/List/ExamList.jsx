@@ -44,6 +44,25 @@ function getAvailableFilterOptions(examRecords) {
 /** Pixels to shift the filter menu left so list text lines up with the header label text. */
 const FILTER_MENU_NUDGE_LEFT_PX = 16;
 
+/** Characters not allowed in file names on Windows/macOS */
+const UNSAFE_FILENAME_CHARS = /[\\/:*?"<>|]/g;
+
+/** Download name "subject-teacher-year-type.ext" instead of the server's stored name */
+function getDownloadFileName(record) {
+  const baseName = [
+    record[EXAM_COLUMNS.SUBJECT],
+    record[EXAM_COLUMNS.TEACHER],
+    record[EXAM_COLUMNS.YEAR],
+    record[EXAM_COLUMNS.TYPE],
+  ]
+    .map((part) => String(part ?? "").replace(UNSAFE_FILENAME_CHARS, "_").trim())
+    .filter(Boolean)
+    .join("-");
+  // Keep the stored file's real extension so it opens with the right app
+  const extension = String(record[EXAM_COLUMNS.FILE_URL] ?? "").match(/\.([a-z0-9]+)$/i);
+  return extension ? `${baseName}.${extension[1].toLowerCase()}` : baseName;
+}
+
 function getExamTypeBadgeClass(examType) {
   const type = String(examType).toLowerCase();
   if (type.includes("期中")) return "tint-orange";
@@ -237,8 +256,9 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   const renderDownloadLink = (record) => (
     <a
       href={record[EXAM_COLUMNS.FILE_URL]}
-      target="_blank"
-      rel="noreferrer"
+      // Saves under a readable name (same-origin files only). No target="_blank":
+      // Chromium drops the download name when the link opens a new tab.
+      download={getDownloadFileName(record)}
       aria-label="下載"
       title="下載"
       className="pressable inline-flex items-center justify-center w-9 h-9 shrink-0 rounded-full bg-accent-tint text-accent-text hover:bg-accent hover:text-white"
