@@ -229,12 +229,6 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
     { key: "type", label: "類別", width: "w-[12%]", align: "text-center" },
   ];
 
-  const getDownloadButtonLabel = (filename) => {
-    if (!filename) return "下載";
-    const extension = filename.split(".").pop();
-    return extension?.toUpperCase() || "下載";
-  };
-
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-6">
       {/* Header */}
@@ -324,10 +318,11 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                         href={record[EXAM_COLUMNS.FILE_URL]}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                        aria-label="下載"
+                        title="下載"
+                        className="inline-flex items-center justify-center w-9 h-9 bg-blue-500 hover:bg-blue-600 text-white rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
                       >
                         <FontAwesomeIcon icon={faDownload} />
-                        {getDownloadButtonLabel(record[EXAM_COLUMNS.FILENAME])}
                       </a>
                     </td>
                   </tr>

@@ -211,7 +211,7 @@ function App() {
 
   if (isLoggedIn) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 flex flex-col">
         <Helmet>
           <title>交大電機考古網站</title>
           <meta
@@ -242,7 +242,7 @@ function App() {
           userName={userName}
           activeNavItemId={activeNavItemId}
         />
-        {renderCurrentView()}
+        <main className="flex-1 flex flex-col">{renderCurrentView()}</main>
       </div>
     );
   }

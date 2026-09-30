@@ -30,7 +30,7 @@ const HomePage = ({ examDataByCategory }) => {
   }, [examDataByCategory]);
 
   return (
-    <>
+    <div className="flex flex-1 flex-col">
       {/* Hero Section */}
       <div className="bg-blue-900 py-16 md:py-24 px-4 text-center text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -78,7 +78,7 @@ const HomePage = ({ examDataByCategory }) => {
       </div>
 
       {/* Main Content */}
-      <div className="bg-slate-100 py-12 md:py-16 px-4">
+      <div className="bg-slate-100 py-12 md:py-16 px-4 flex-1">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 md:gap-8">
           {/* Instructions Card */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
@@ -141,7 +141,7 @@ const HomePage = ({ examDataByCategory }) => {
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 };
 
