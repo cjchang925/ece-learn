@@ -253,18 +253,28 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
     { key: "type", label: "類別", width: "w-[13%]", align: "text-center" },
   ];
 
+  // A button (not a link) so hovering does not show the file URL in the
+  // browser's status bar; the click triggers a temporary, never-rendered link.
+  // No target="_blank": Chromium drops the download name in a new tab.
+  const downloadRecord = (record) => {
+    const link = document.createElement("a");
+    link.href = record[EXAM_COLUMNS.FILE_URL];
+    link.download = getDownloadFileName(record);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   const renderDownloadLink = (record) => (
-    <a
-      href={record[EXAM_COLUMNS.FILE_URL]}
-      // Saves under a readable name (same-origin files only). No target="_blank":
-      // Chromium drops the download name when the link opens a new tab.
-      download={getDownloadFileName(record)}
+    <button
+      type="button"
+      onClick={() => downloadRecord(record)}
       aria-label="下載"
       title="下載"
       className="pressable inline-flex items-center justify-center w-9 h-9 shrink-0 rounded-full bg-accent-tint text-accent-text hover:bg-accent hover:text-white"
     >
       <FontAwesomeIcon icon={faDownload} className="text-sm" />
-    </a>
+    </button>
   );
 
   return (
