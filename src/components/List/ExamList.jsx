@@ -222,20 +222,15 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
   );
 
   const applyFilter = (filterCategory, filterValue) => {
+    // Picking a filter resets the ones after it (科目 → 教師 → 類別)
     setActiveFilters((prev) => {
       if (filterCategory === "subject") {
         return { ...NO_FILTERS, subject: filterValue };
       }
-      const next = { ...prev, [filterCategory]: filterValue };
-      // A new teacher may not have the chosen 類別; drop it rather than show nothing
-      if (
-        filterCategory === "teacher" &&
-        next.type &&
-        filterRecords(initialExamRecords, next).length === 0
-      ) {
-        next.type = "";
+      if (filterCategory === "teacher") {
+        return { ...prev, teacher: filterValue, type: "" };
       }
-      return next;
+      return { ...prev, [filterCategory]: filterValue };
     });
   };
 
