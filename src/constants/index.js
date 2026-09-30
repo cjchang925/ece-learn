@@ -28,7 +28,6 @@ export const STORAGE_KEYS = {
 // View Types for Navigation
 export const VIEW_TYPES = {
   HOME: 'readme',
-  WISH_LIST: 'hope',
   UPLOAD: 'uploadfile',
   EXAM_LIST: 'list',
 };
@@ -47,15 +46,9 @@ export const EXAM_COLUMNS = {
   TEACHER: 1,
   YEAR: 2,
   TYPE: 3,
-  NOTE: 4,
+  FILE_EXTENSION: 4,
   FILENAME: 5,
   FILE_URL: 6,
-};
-
-// External URLs
-export const EXTERNAL_URLS = {
-  WISH_FORM: 'https://docs.google.com/forms/d/e/1FAIpQLSfn5uEo1MefhezayHOvvfWoIlAKJ7XvnKiUSaXXdDE0cLPAag/viewform?usp=pp_url',
-  WISH_SPREADSHEET: 'https://docs.google.com/spreadsheets/d/1cW-HJEbYDWIsagjmoWyrzjjRlMnBQ3feQfbsKcPi9ZU/gviz/tq?tqx=out:json&tq&gid=0',
 };
 
 // API Response Messages
@@ -64,5 +57,4 @@ export const API_MESSAGES = {
   NO_RECORD: 'No record!',
   SUCCESS: 'Success!',
   INVALID_FILE: 'Invalid file!',
-  INVALID_USER: 'Invalid user!',
 };

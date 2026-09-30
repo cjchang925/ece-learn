@@ -4,10 +4,11 @@ import { Helmet } from "react-helmet";
 
 import Navbar from "./components/Navbar/Navbar.jsx";
 import ExamList from "./components/List/ExamList.jsx";
-import WishCardList from "./components/card/WishCardList.jsx";
 import UploadFile from "./components/UploadFile/UploadFile.jsx";
+import UploadSignInPrompt from "./components/UploadFile/UploadSignInPrompt.jsx";
 import HomePage from "./components/HomePage/HomePage.jsx";
-import Login from "./components/Login/Login.jsx";
+import Footer from "./components/Footer/Footer.jsx";
+import useGoogleSignIn from "./hooks/useGoogleSignIn.js";
 
 import {
   API_ENDPOINTS,
@@ -38,7 +39,9 @@ function App() {
   const [currentView, setCurrentView] = useState(() => {
     try {
       const raw = window.sessionStorage.getItem(STORAGE_KEYS.CURRENT_VIEW);
-      return raw ? JSON.parse(raw) : VIEW_TYPES.HOME;
+      const view = raw ? JSON.parse(raw) : VIEW_TYPES.HOME;
+      // Views saved by older versions (e.g. the removed wish list) fall back to home
+      return Object.values(VIEW_TYPES).includes(view) ? view : VIEW_TYPES.HOME;
     } catch {
       return VIEW_TYPES.HOME;
     }
@@ -58,12 +61,23 @@ function App() {
       JSON.parse(window.localStorage.getItem(STORAGE_KEYS.LOGIN_STATE)) ||
       false,
   );
-  const [userName, setUserName] = useState(
-    window.localStorage.getItem(STORAGE_KEYS.USER_NAME) || "Test User",
-  );
   const [isCheckingAuth, setIsCheckingAuth] = useState(!UI_TEST_MODE);
 
+  const handleSignedIn = () => {
+    setIsLoggedIn(true);
+    window.localStorage.setItem(STORAGE_KEYS.LOGIN_STATE, true);
+  };
+  const { signIn, isSigningIn } = useGoogleSignIn(handleSignedIn);
+
+  // Links like /#privacy-policy: scroll once the React tree has rendered
   useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (id) document.getElementById(id)?.scrollIntoView();
+  }, []);
+
+  useEffect(() => {
+    // Legacy keys from older versions
+    window.localStorage.removeItem(STORAGE_KEYS.USER_NAME);
     window.localStorage.removeItem(STORAGE_KEYS.CURRENT_VIEW);
     window.localStorage.removeItem(STORAGE_KEYS.FILTERED_EXAMS);
   }, []);
@@ -129,11 +143,7 @@ function App() {
       behavior: "instant",
     });
 
-    const nonExamViews = [
-      VIEW_TYPES.HOME,
-      VIEW_TYPES.WISH_LIST,
-      VIEW_TYPES.UPLOAD,
-    ];
+    const nonExamViews = [VIEW_TYPES.HOME, VIEW_TYPES.UPLOAD];
 
     if (nonExamViews.includes(category)) {
       setCurrentView(category);
@@ -165,98 +175,88 @@ function App() {
   };
 
   const activeNavItemId =
-    currentView === VIEW_TYPES.EXAM_LIST
-      ? selectedGradeCategory
-      : currentView;
+    currentView === VIEW_TYPES.EXAM_LIST ? selectedGradeCategory : currentView;
 
-  const handleLogout = () => {
-    fetch(API_ENDPOINTS.LOGOUT, {
-      method: "GET",
-      credentials: "include",
-    });
-
-    window.localStorage.removeItem(STORAGE_KEYS.USER_NAME);
-    window.sessionStorage.removeItem(STORAGE_KEYS.FILTERED_EXAMS);
-    window.sessionStorage.removeItem(STORAGE_KEYS.CURRENT_VIEW);
-    window.sessionStorage.removeItem(STORAGE_KEYS.SELECTED_GRADE_CATEGORY);
+  const handleSessionExpired = () => {
     window.localStorage.removeItem(STORAGE_KEYS.LOGIN_STATE);
     setIsLoggedIn(false);
   };
 
-  // Loading screen while checking authentication
-  if (isCheckingAuth) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"></div>
-          <p className="text-white text-lg">Checking authentication...</p>
+  const handleLogout = () => {
+    fetch(API_ENDPOINTS.LOGOUT, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    window.localStorage.removeItem(STORAGE_KEYS.LOGIN_STATE);
+    setIsLoggedIn(false);
+  };
+
+  const renderUploadView = () => {
+    if (isCheckingAuth) {
+      return (
+        <div className="flex-1 flex items-center justify-center">
+          <div
+            className="activity-indicator"
+            role="status"
+            aria-label="Loading"
+          />
         </div>
-      </div>
-    );
-  }
+      );
+    }
+    if (!isLoggedIn) {
+      return <UploadSignInPrompt onSignIn={signIn} isSigningIn={isSigningIn} />;
+    }
+    return <UploadFile onSessionExpired={handleSessionExpired} />;
+  };
 
   const renderCurrentView = () => {
     switch (currentView) {
       case VIEW_TYPES.HOME:
-        return <HomePage examDataByCategory={examDataByCategory} />;
-      case VIEW_TYPES.WISH_LIST:
-        return <WishCardList />;
+        return <HomePage />;
       case VIEW_TYPES.UPLOAD:
-        return <UploadFile />;
+        return renderUploadView();
       case VIEW_TYPES.EXAM_LIST:
       default:
         return <ExamList examRecords={filteredExams} />;
     }
   };
 
-  if (isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
-        <Helmet>
-          <title>交大電機考古網站</title>
-          <meta
-            name="description"
-            content="交大電機專用考古網站，您考前的好幫手"
-          />
-          <meta
-            name="og:description"
-            content="交大電機專用考古網站，您考前的好幫手"
-          />
-          <meta property="og:site_name" content="Learn with NYCU EE" />
-          <meta property="og:locale" content="zh_tw" />
-          <meta property="og:url" content="prevexam.dece.nycu.edu.tw" />
-          <meta
-            property="og:image:secure_url"
-            content="https://storage.googleapis.com/ece-files/og.jpeg"
-          />
-          <meta property="og:image:type" content="image/jpeg" />
-          <script
-            src="https://accounts.google.com/gsi/client"
-            async
-            defer
-          ></script>
-        </Helmet>
-        <Navbar
-          onCategorySelect={handleCategorySelect}
-          onLogout={handleLogout}
-          userName={userName}
-          activeNavItemId={activeNavItemId}
-        />
-        <main className="flex-1 flex flex-col">{renderCurrentView()}</main>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-canvas flex flex-col">
       <Helmet>
-        <title>Login - 交大電機考古網站</title>
+        <title>交大電機考古網站</title>
         <meta
           name="description"
           content="交大電機專用考古網站，您考前的好幫手"
         />
+        <meta
+          name="og:description"
+          content="交大電機專用考古網站，您考前的好幫手"
+        />
+        <meta property="og:site_name" content="Learn with NYCU EE" />
+        <meta property="og:locale" content="zh_tw" />
+        <meta property="og:url" content="prevexam.dece.nycu.edu.tw" />
+        <meta
+          property="og:image:secure_url"
+          content="https://storage.googleapis.com/ece-files/og.jpeg"
+        />
+        <meta property="og:image:type" content="image/jpeg" />
+        <script
+          src="https://accounts.google.com/gsi/client"
+          async
+          defer
+        ></script>
       </Helmet>
-      <Login onLoginSuccess={setIsLoggedIn} onUserNameChange={setUserName} />
+      <Navbar
+        onCategorySelect={handleCategorySelect}
+        onLogout={handleLogout}
+        // A stale localStorage value must not flash 登出 before the server confirms
+        isLoggedIn={isLoggedIn && !isCheckingAuth}
+        activeNavItemId={activeNavItemId}
+      />
+      <main className="flex-1 flex flex-col">{renderCurrentView()}</main>
+      <Footer />
     </div>
   );
 }
