@@ -184,7 +184,7 @@ function App() {
 
   const handleLogout = () => {
     fetch(API_ENDPOINTS.LOGOUT, {
-      method: "GET",
+      method: "POST",
       credentials: "include",
     });
 
