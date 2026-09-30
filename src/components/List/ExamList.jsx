@@ -41,8 +41,12 @@ function getAvailableFilterOptions(examRecords) {
   ];
 }
 
-/** Pixels to shift the filter menu left so list text lines up with the header label text. */
-const FILTER_MENU_NUDGE_LEFT_PX = 16;
+/**
+ * Pixels to shift a left-aligned filter menu left of the header label box so the
+ * option text lines up with the label text: menu padding (6) + item padding (12)
+ * minus the label box's own horizontal padding (8).
+ */
+const FILTER_MENU_NUDGE_LEFT_PX = 10;
 
 /** Characters not allowed in file names on Windows/macOS */
 const UNSAFE_FILENAME_CHARS = /[\\/:*?"<>|]/g;
@@ -71,6 +75,13 @@ function getExamTypeBadgeClass(examType) {
   if (type.includes("作業") || type.includes("hw")) return "tint-blue";
   return "tint-purple";
 }
+
+const columns = [
+  { key: "subject", label: "科目", width: "w-[34%]", align: "text-left" },
+  { key: "teacher", label: "教師", width: "w-[13.2%]", align: "text-left" },
+  { key: "year", label: "學年度", width: "w-[13.2%]", align: "text-center" },
+  { key: "type", label: "類別", width: "w-[13.2%]", align: "text-center" },
+];
 
 const ExamList = ({ examRecords: initialExamRecords }) => {
   const [filteredRecords, setFilteredRecords] = useState(initialExamRecords);
@@ -105,11 +116,18 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
     if (!th) return null;
     const thRect = th.getBoundingClientRect();
     const labelRect = labelEl?.getBoundingClientRect();
+    if (columns[columnIndex].align === "text-center") {
+      // Centered columns: center the menu under the whole column
+      return {
+        top: thRect.bottom,
+        left: thRect.left + thRect.width / 2,
+        transform: "translateX(-50%)",
+      };
+    }
     const anchorLeft = labelRect?.left ?? thRect.left;
-    const left = Math.max(8, anchorLeft - FILTER_MENU_NUDGE_LEFT_PX);
     return {
       top: thRect.bottom,
-      left,
+      left: Math.max(8, anchorLeft - FILTER_MENU_NUDGE_LEFT_PX),
     };
   };
 
@@ -245,13 +263,6 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
 
     setFilteredRecords(filtered);
   };
-
-  const columns = [
-    { key: "subject", label: "科目", width: "w-[34%]", align: "text-left" },
-    { key: "teacher", label: "教師", width: "w-[13.2%]", align: "text-left" },
-    { key: "year", label: "學年度", width: "w-[13.2%]", align: "text-center" },
-    { key: "type", label: "類別", width: "w-[13.2%]", align: "text-center" },
-  ];
 
   // A button (not a link) so hovering does not show the file URL in the
   // browser's status bar; the click triggers a temporary, never-rendered link.
@@ -458,6 +469,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
           style={{
             top: filterMenuStyle.top,
             left: filterMenuStyle.left,
+            transform: filterMenuStyle.transform,
           }}
           onMouseEnter={handleFilterMenuEnter}
           onMouseLeave={handleFilterMenuLeave}
