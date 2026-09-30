@@ -248,9 +248,9 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
 
   const columns = [
     { key: "subject", label: "科目", width: "w-[34%]", align: "text-left" },
-    { key: "teacher", label: "教師", width: "w-[18%]", align: "text-left" },
-    { key: "year", label: "年份", width: "w-[13%]", align: "text-center" },
-    { key: "type", label: "類別", width: "w-[13%]", align: "text-center" },
+    { key: "teacher", label: "教師", width: "w-[13.2%]", align: "text-left" },
+    { key: "year", label: "學年度", width: "w-[13.2%]", align: "text-center" },
+    { key: "type", label: "類別", width: "w-[13.2%]", align: "text-center" },
   ];
 
   // A button (not a link) so hovering does not show the file URL in the
@@ -315,7 +315,7 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
               ref={tableScrollRef}
               className="hidden md:block overflow-x-auto"
             >
-              <table className="w-full min-w-[720px]">
+              <table className="w-full min-w-[720px] table-fixed">
                 <thead>
                   <tr className="border-b border-separator">
                     {columns.map((column, columnIndex) => {
@@ -358,10 +358,10 @@ const ExamList = ({ examRecords: initialExamRecords }) => {
                         </th>
                       );
                     })}
-                    <th className="w-[11%] px-5 py-4 text-center text-label-2 text-[13px] font-semibold">
+                    <th className="w-[13.2%] px-5 py-4 text-center text-label-2 text-[13px] font-semibold">
                       副檔名
                     </th>
-                    <th className="w-[11%] px-5 py-4 text-center text-label-2 text-[13px] font-semibold">
+                    <th className="w-[13.2%] px-5 py-4 text-center text-label-2 text-[13px] font-semibold">
                       下載
                     </th>
                   </tr>
