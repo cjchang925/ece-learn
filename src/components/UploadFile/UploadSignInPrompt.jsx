@@ -15,9 +15,6 @@ const UploadSignInPrompt = ({ onSignIn, isSigningIn }) => (
       <GoogleSignInButton onClick={onSignIn} isSigningIn={isSigningIn} />
       <p className="mt-5 text-footnote text-label-3">
         瀏覽與下載考古題不需要登入。
-        <a href="#privacy-policy" className="text-accent-text hover:underline">
-          隱私權政策
-        </a>
       </p>
     </div>
   </div>

@@ -4,7 +4,7 @@ import { FaGithub } from "react-icons/fa";
 const Footer = () => {
   return (
     <footer className="bg-surface-2 border-t border-separator text-[15px] leading-relaxed text-label-2">
-      <div className="max-w-[74rem] mx-auto px-4 py-8">
+      <div className="max-w-[50rem] mx-auto px-4 py-8">
         {/* Brand */}
         <div className="flex items-center gap-2.5 mb-4">
           <div className="w-8 h-8 bg-gradient-to-b from-[#2997ff] to-[#0066cc] rounded-[9px] flex items-center justify-center text-white text-xs font-semibold shrink-0">
@@ -55,7 +55,7 @@ const Footer = () => {
           >
             Privacy Policy
           </h4>
-          <p className="max-w-3xl">
+          <p>
             No account is needed to browse or download exams. To upload, you
             sign in with Google OAuth 2.0 and we receive your name, email
             address and profile picture, used only to verify NYCU membership
