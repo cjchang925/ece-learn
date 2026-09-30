@@ -205,9 +205,17 @@ const UploadFile = ({ onSessionExpired }) => {
     try {
       const response = await fetch(API_ENDPOINTS.UPLOAD_FILE, {
         method: "POST",
+        credentials: "include",
         body: uploadPayload,
       });
-      const result = await response.json();
+
+      if (response.status === 413) {
+        alert("檔案過大，請上傳 50MB 以下的檔案。");
+        return;
+      }
+
+      // Proxy errors may not be JSON
+      const result = await response.json().catch(() => ({}));
 
       // No valid session (expired, or the server restarted): sign in again
       if (response.status === 401) {
