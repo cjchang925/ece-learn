@@ -29,12 +29,13 @@ module.exports = {
       },
       fontFamily: {
         sans: [
+          'Inter',
+          'Noto Sans TC',
           '-apple-system',
           'BlinkMacSystemFont',
-          'SF Pro Text',
+          'Segoe UI',
           'PingFang TC',
-          'Helvetica Neue',
-          'Noto Sans TC',
+          'Microsoft JhengHei',
           'system-ui',
           'sans-serif',
         ],

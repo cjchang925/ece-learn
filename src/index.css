@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -83,8 +81,13 @@
   }
 
   html {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
-      'PingFang TC', 'Helvetica Neue', 'Noto Sans TC', system-ui, sans-serif;
+    /*
+     * Inter has no CJK glyphs, so Latin text renders in Inter and Traditional
+     * Chinese falls through to Noto Sans TC. If neither web font loads, use the
+     * platform's system UI fonts.
+     */
+    font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont,
+      'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
     font-optical-sizing: auto;
     -webkit-tap-highlight-color: transparent;
   }
