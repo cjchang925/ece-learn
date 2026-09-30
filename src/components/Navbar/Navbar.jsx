@@ -107,23 +107,20 @@ const Navbar = ({
                   );
                 })}
               </div>
-              {/* Only for signed-in users; the slot is kept while hidden so the centred tabs never shift */}
-              <button
-                type="button"
-                onClick={handleLogoutClick}
-                disabled={!isLoggedIn}
-                aria-hidden={!isLoggedIn || undefined}
-                className={`pressable min-w-[3.5rem] px-3 py-1.5 rounded-full text-[13px] font-medium text-destructive hover:bg-[var(--tint-red-bg)] ${
-                  isLoggedIn ? "" : "invisible"
-                }`}
-              >
-                登出
-              </button>
             </div>
           </div>
 
-          {/* Mobile menu button (right column mirrors left for balanced centering on desktop) */}
+          {/* Right column (mirrors the left one, so the tabs stay truly centred): 登出 on desktop, menu button on mobile */}
           <div className="flex justify-end items-center justify-self-end min-w-0">
+            {isLoggedIn && (
+              <button
+                type="button"
+                onClick={handleLogoutClick}
+                className="pressable hidden lg:inline-flex px-3 py-1.5 rounded-full text-[13px] font-medium text-destructive hover:bg-[var(--tint-red-bg)]"
+              >
+                登出
+              </button>
+            )}
             <button
               type="button"
               onClick={toggleMobileMenu}
