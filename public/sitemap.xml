@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The site is a single-page app: grade views, the upload page and the privacy
+     policy (#privacy-policy) all live at this one URL, so it is the only entry. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://prevexam.dece.nycu.edu.tw/</loc>
+    <lastmod>2026-10-02</lastmod>
+  </url>
+</urlset>
