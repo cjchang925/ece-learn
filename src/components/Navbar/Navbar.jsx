@@ -34,7 +34,8 @@ const Navbar = ({
     { id: GRADE_CATEGORIES.SECOND_YEAR, label: "大二" },
     { id: GRADE_CATEGORIES.ADVANCED, label: "大三以上" },
     { id: GRADE_CATEGORIES.OTHER, label: "通識與其他" },
-    { id: VIEW_TYPES.UPLOAD, label: "上傳考古" },
+    // The call to action: accent-colored so it stands out from the browse tabs
+    { id: VIEW_TYPES.UPLOAD, label: "上傳考古", isHighlighted: true },
   ];
 
   const measureIndicator = useCallback(() => {
@@ -97,9 +98,11 @@ const Navbar = ({
                       onClick={() => handleCategoryClick(item.id)}
                       className={`pressable relative z-10 px-3.5 py-1.5 rounded-full text-[13px] whitespace-nowrap
                         ${
-                          isActive
-                            ? "text-label font-semibold"
-                            : "text-label-2 font-medium hover:text-label"
+                          item.isHighlighted
+                            ? "text-accent-text font-semibold"
+                            : isActive
+                              ? "text-label font-semibold"
+                              : "text-label-2 font-medium hover:text-label"
                         }`}
                     >
                       {item.label}
@@ -154,7 +157,9 @@ const Navbar = ({
                     ${
                       isActive
                         ? "bg-accent-tint text-accent-text font-semibold"
-                        : "text-label font-medium hover:bg-fill"
+                        : item.isHighlighted
+                          ? "text-accent-text font-semibold hover:bg-fill"
+                          : "text-label font-medium hover:bg-fill"
                     }`}
                 >
                   {item.label}
