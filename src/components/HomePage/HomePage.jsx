@@ -11,7 +11,7 @@ const STATS = [
 const HomePage = () => {
   const instructions = [
     "考古資源是學長姐慢慢累積出來的，請不要惡意使用。",
-    "上傳考古題前請確認老師意願，若有侵權問題請自行負責。",
+    "上傳考古題若有侵權問題請自行負責。",
   ];
 
   return (
@@ -33,7 +33,7 @@ const HomePage = () => {
             </span>
           </h1>
           <p className="text-lg md:text-2xl leading-snug tracking-tight text-label-2 max-w-2xl mx-auto mb-14 text-balance">
-            集結學長姐的智慧結晶，助你在考試中脫穎而出
+            學長姐留下的考古題，一站找齊。
           </p>
 
           <dl className="grid grid-cols-3 max-w-3xl mx-auto divide-x divide-separator">
